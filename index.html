@@ -695,22 +695,21 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
         function startTimer() {
             quizStartTime = Date.now();
             const timerEl = document.getElementById('quizTimer');
-            }
             timerInterval = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
                 const minutes = Math.floor(elapsed / 60);
                 const seconds = elapsed % 60;
                 timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             }, 1000);
-        
+        }
 
-        function stopTimer() {{
+        function stopTimer() {
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
             }
             return quizStartTime ? Math.floor((Date.now() - quizStartTime) / 1000) : 0;
-        }}
+        }
 
         // Base questions - 200+ quality questions about Raiku
 
@@ -1224,12 +1223,23 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
                     return;
                 }
 
-                const { error } = await supabase.from('users').insert({ username: inputName });
-if (error) {
-    showNotification('This name already exists, choose a new name dragon! 🐉', 'error');
-    return;
-}
-registeredUsers.push(inputName.toLowerCase());
+                // Try to save to database but don't block on it
+                try {
+                    const { error } = await supabase.from('users').insert({ username: inputName });
+                    if (error) {
+                        console.log('Database insert failed, continuing with local mode');
+                    }
+                } catch (err) {
+                    console.log('Database error, continuing with local mode:', err);
+                }
+                
+                // Add to local registry regardless of database
+                registeredUsers.push(inputName.toLowerCase());
+                currentPlayer = inputName;
+            } else if (currentPlayer) {
+                // User already has a name saved
+            } else {
+                currentPlayer = inputName;
             }
 
             quizQuestions = selectQuizQuestions();
@@ -1342,7 +1352,14 @@ registeredUsers.push(inputName.toLowerCase());
                 scores = scores.slice(0, 100);
             }
 
-            await saveData();await supabase.from('scores').insert({ username: currentPlayer, score: correctAnswers, time_taken: timeElapsed });
+            await saveData();
+            
+            // Try to save to database but don't block
+            try {
+                await supabase.from('scores').insert({ username: currentPlayer, score: correctAnswers, time_taken: timeElapsed });
+            } catch (err) {
+                console.log('Database save failed, score saved locally:', err);
+            }
 
             // Display results
             document.getElementById('finalScore').textContent = `${correctAnswers}/20`;
