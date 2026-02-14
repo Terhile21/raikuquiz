@@ -1,7 +1,13 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://bsoakiekkdsrrcmjwppy.supabase.co'
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzb2FraWVra2RzcnJjbWp3cHB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5NzQxMTMsImV4cCI6MjA4NjU1MDExM30.iv1NwmJnhFjRTJgKvP1Vp3CD4I3Hr0o44YlftU76syA'
+  const { createClient } = window.supabase
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Raiku Quiz - Test Your Knowledge</title>
@@ -12,519 +18,516 @@
             box-sizing: border-box;
         }
 
-```
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #000000;
-        background-image: url('data:image/svg+xml,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(190,242,2,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        position: relative;
-    }
-    
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: radial-gradient(circle at 50% 50%, rgba(190,242,2,0.15) 0%, transparent 50%);
-        pointer-events: none;
-    }
-
-    .container {
-        background: rgba(20, 20, 20, 0.95);
-        border-radius: 20px;
-        padding: 40px;
-        max-width: 800px;
-        width: 100%;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(190,242,2,0.2);
-        border: 2px solid rgba(190,242,2,0.3);
-        position: relative;
-        z-index: 1;
-    }
-
-    .header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    h1 {
-        color: #BEF202;
-        font-size: 2.5em;
-        margin-bottom: 10px;
-        text-shadow: 0 0 20px rgba(190,242,2,0.5);
-    }
-
-    .subtitle {
-        color: #888;
-        font-size: 1.1em;
-    }
-
-    .welcome-screen, .quiz-screen, .results-screen, .admin-screen {
-        display: none;
-    }
-
-    .welcome-screen.active, .quiz-screen.active, .results-screen.active, .admin-screen.active {
-        display: block;
-    }
-
-    .input-group {
-        margin: 30px 0;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 10px;
-        color: #BEF202;
-        font-weight: 600;
-        font-size: 1.1em;
-    }
-
-    input[type="text"], input[type="password"], textarea {
-        width: 100%;
-        padding: 15px;
-        border: 2px solid rgba(190,242,2,0.3);
-        background: rgba(30,30,30,0.8);
-        color: #fff;
-        border-radius: 10px;
-        font-size: 1em;
-        transition: border-color 0.3s;
-    }
-
-    textarea {
-        min-height: 100px;
-        font-family: inherit;
-    }
-
-    input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
-        outline: none;
-        border-color: #BEF202;
-        box-shadow: 0 0 15px rgba(190,242,2,0.3);
-    }
-
-    .btn {
-        background: #BEF202;
-        color: #000;
-        border: none;
-        padding: 15px 40px;
-        border-radius: 10px;
-        font-size: 1.1em;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.3s, height 0.3s;
-    }
-
-    .btn:active::before {
-        width: 300px;
-        height: 300px;
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(190,242,2,0.5);
-        background: #d4ff33;
-    }
-
-    .btn:active {
-        transform: translateY(0);
-        box-shadow: 0 5px 15px rgba(190,242,2,0.3);
-    }
-
-    .btn:disabled {
-        background: #333;
-        color: #666;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    .btn-secondary {
-        background: rgba(190,242,2,0.2);
-        color: #BEF202;
-        border: 2px solid rgba(190,242,2,0.4);
-    }
-
-    .btn-secondary:hover {
-        box-shadow: 0 10px 20px rgba(190,242,2,0.3);
-        background: rgba(190,242,2,0.3);
-    }
-
-    .btn-small {
-        padding: 8px 20px;
-        font-size: 0.9em;
-    }
-
-    .question-container {
-        margin: 30px 0;
-    }
-
-    .question-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        color: #888;
-        font-size: 0.9em;
-    }
-
-    .question-text {
-        font-size: 1.3em;
-        color: #fff;
-        margin-bottom: 25px;
-        line-height: 1.6;
-    }
-
-    .options {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .option {
-        padding: 15px 20px;
-        border: 2px solid rgba(190,242,2,0.3);
-        background: rgba(30,30,30,0.6);
-        color: #fff;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        position: relative;
-    }
-
-    .option:hover {
-        border-color: #BEF202;
-        background: rgba(190,242,2,0.1);
-        transform: translateX(5px);
-    }
-
-    .option:active {
-        transform: translateX(3px) scale(0.98);
-    }
-
-    .option.selected {
-        border-color: #BEF202;
-        background: #BEF202;
-        color: #000;
-        font-weight: 600;
-        animation: pulse 0.3s ease;
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.02); }
-        100% { transform: scale(1); }
-    }
-
-    .navigation {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 30px;
-    }
-
-    .leaderboard {
-        margin-top: 30px;
-    }
-
-    .leaderboard h2 {
-        color: #BEF202;
-        margin-bottom: 20px;
-        text-align: center;
-        text-shadow: 0 0 20px rgba(190,242,2,0.3);
-    }
-
-    .leaderboard-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 15px;
-        border-bottom: 1px solid rgba(190,242,2,0.1);
-        align-items: center;
-        color: #fff;
-    }
-
-    .leaderboard-item:first-child {
-        background: linear-gradient(135deg, rgba(190,242,2,0.3) 0%, rgba(190,242,2,0.1) 100%);
-        border: 2px solid #BEF202;
-        color: #BEF202;
-        border-radius: 10px;
-        margin-bottom: 10px;
-    }
-
-    .rank {
-        font-weight: bold;
-        margin-right: 15px;
-        min-width: 30px;
-    }
-
-    .player-name {
-        flex: 1;
-    }
-
-    .score {
-        font-weight: bold;
-        color: #BEF202;
-    }
-
-    .leaderboard-item:first-child .score {
-        color: #BEF202;
-    }
-
-    .results-container {
-        text-align: center;
-    }
-
-    .score-display {
-        font-size: 3em;
-        color: #BEF202;
-        margin: 20px 0;
-        font-weight: bold;
-        text-shadow: 0 0 30px rgba(190,242,2,0.5);
-    }
-
-    .comment {
-        font-size: 1.5em;
-        color: #fff;
-        margin: 20px 0;
-        font-weight: 600;
-    }
-
-    .docs-link {
-        display: inline-block;
-        margin: 20px 0;
-        color: #BEF202;
-        text-decoration: none;
-        font-size: 1.1em;
-        transition: all 0.3s;
-    }
-
-    .docs-link:hover {
-        text-decoration: underline;
-        text-shadow: 0 0 10px rgba(190,242,2,0.5);
-    }
-
-    .progress-bar {
-        width: 100%;
-        height: 8px;
-        background: rgba(30,30,30,0.8);
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 20px;
-        border: 1px solid rgba(190,242,2,0.2);
-    }
-
-    .progress-fill {
-        height: 100%;
-        background: #BEF202;
-        transition: width 0.3s;
-        box-shadow: 0 0 10px rgba(190,242,2,0.6);
-    }
-
-    .admin-link {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        color: rgba(190,242,2,0.3);
-        text-decoration: none;
-        font-size: 0.8em;
-        transition: all 0.3s;
-        z-index: 1000;
-    }
-
-    .admin-link:hover {
-        color: #BEF202;
-    }
-
-    .question-form {
-        background: rgba(30,30,30,0.6);
-        padding: 20px;
-        border-radius: 10px;
-        margin: 20px 0;
-        border: 2px solid rgba(190,242,2,0.2);
-    }
-
-    .question-list {
-        max-height: 400px;
-        overflow-y: auto;
-        margin: 20px 0;
-    }
-
-    .question-item {
-        background: rgba(30,30,30,0.6);
-        padding: 15px;
-        margin: 10px 0;
-        border-radius: 8px;
-        border: 1px solid rgba(190,242,2,0.2);
-        color: #fff;
-    }
-
-    .question-item strong {
-        color: #BEF202;
-    }
-
-    .delete-btn {
-        background: #ff4444;
-        color: white;
-        border: none;
-        padding: 5px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-left: 10px;
-        font-size: 0.85em;
-    }
-
-    .delete-btn:hover {
-        background: #cc0000;
-    }
-
-    .admin-actions {
-        display: flex;
-        gap: 10px;
-        margin: 20px 0;
-        flex-wrap: wrap;
-    }
-
-    .saved-name {
-        color: #BEF202;
-        font-size: 1.2em;
-        margin: 10px 0;
-        text-align: center;
-    }
-
-    .username-note {
-        color: #888;
-        font-size: 0.9em;
-        margin-top: 5px;
-        text-align: center;
-    }
-
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: rgba(20, 20, 20, 0.95);
-        border: 2px solid #BEF202;
-        border-radius: 10px;
-        padding: 15px 20px;
-        color: #fff;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(190,242,2,0.3);
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-        max-width: 400px;
-    }
-
-    .notification.error {
-        border-color: #ff4444;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255,68,68,0.3);
-    }
-
-    .notification.success {
-        border-color: #BEF202;
-    }
-
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            background-image: url('data:image/svg+xml,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(190,242,2,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
         }
-        to {
-            transform: translateX(0);
-            opacity: 1;
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(190,242,2,0.15) 0%, transparent 50%);
+            pointer-events: none;
         }
-    }
 
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
+        .container {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(190,242,2,0.2);
+            border: 2px solid rgba(190,242,2,0.3);
+            position: relative;
+            z-index: 1;
         }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
         }
-    }
 
-    .stats-bar {
-        display: flex;
-        justify-content: space-around;
-        margin: 20px 0;
-        padding: 15px;
-        background: rgba(30,30,30,0.6);
-        border-radius: 10px;
-        border: 1px solid rgba(190,242,2,0.2);
-    }
+        h1 {
+            color: #BEF202;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(190,242,2,0.5);
+        }
 
-    .stat-item {
-        text-align: center;
-    }
+        .subtitle {
+            color: #888;
+            font-size: 1.1em;
+        }
 
-    .stat-value {
-        font-size: 1.5em;
-        color: #BEF202;
-        font-weight: bold;
-    }
+        .welcome-screen, .quiz-screen, .results-screen, .admin-screen {
+            display: none;
+        }
 
-    .stat-label {
-        font-size: 0.8em;
-        color: #888;
-        margin-top: 5px;
-    }
+        .welcome-screen.active, .quiz-screen.active, .results-screen.active, .admin-screen.active {
+            display: block;
+        }
 
-    .timer {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: rgba(30,30,30,0.8);
-        padding: 10px 20px;
-        border-radius: 8px;
-        border: 2px solid rgba(190,242,2,0.3);
-        color: #BEF202;
-        font-weight: bold;
-        font-size: 1.2em;
-    }
+        .input-group {
+            margin: 30px 0;
+        }
 
-    .kbd-hint {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background: rgba(30,30,30,0.8);
-        padding: 10px 15px;
-        border-radius: 8px;
-        border: 1px solid rgba(190,242,2,0.2);
-        color: #888;
-        font-size: 0.85em;
-        z-index: 100;
-    }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #BEF202;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
 
-    .kbd {
-        background: rgba(190,242,2,0.2);
-        color: #BEF202;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-weight: bold;
-        margin: 0 2px;
-    }
-</style>
-```
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(190,242,2,0.3);
+            background: rgba(30,30,30,0.8);
+            color: #fff;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
 
+        textarea {
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+            outline: none;
+            border-color: #BEF202;
+            box-shadow: 0 0 15px rgba(190,242,2,0.3);
+        }
+
+        .btn {
+            background: #BEF202;
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(190,242,2,0.5);
+            background: #d4ff33;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(190,242,2,0.3);
+        }
+
+        .btn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(190,242,2,0.2);
+            color: #BEF202;
+            border: 2px solid rgba(190,242,2,0.4);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 20px rgba(190,242,2,0.3);
+            background: rgba(190,242,2,0.3);
+        }
+
+        .btn-small {
+            padding: 8px 20px;
+            font-size: 0.9em;
+        }
+
+        .question-container {
+            margin: 30px 0;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #fff;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid rgba(190,242,2,0.3);
+            background: rgba(30,30,30,0.6);
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+        }
+
+        .option:hover {
+            border-color: #BEF202;
+            background: rgba(190,242,2,0.1);
+            transform: translateX(5px);
+        }
+
+        .option:active {
+            transform: translateX(3px) scale(0.98);
+        }
+
+        .option.selected {
+            border-color: #BEF202;
+            background: #BEF202;
+            color: #000;
+            font-weight: 600;
+            animation: pulse 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .leaderboard {
+            margin-top: 30px;
+        }
+
+        .leaderboard h2 {
+            color: #BEF202;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(190,242,2,0.3);
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid rgba(190,242,2,0.1);
+            align-items: center;
+            color: #fff;
+        }
+
+        .leaderboard-item:first-child {
+            background: linear-gradient(135deg, rgba(190,242,2,0.3) 0%, rgba(190,242,2,0.1) 100%);
+            border: 2px solid #BEF202;
+            color: #BEF202;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .rank {
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+
+        .player-name {
+            flex: 1;
+        }
+
+        .score {
+            font-weight: bold;
+            color: #BEF202;
+        }
+
+        .leaderboard-item:first-child .score {
+            color: #BEF202;
+        }
+
+        .results-container {
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 3em;
+            color: #BEF202;
+            margin: 20px 0;
+            font-weight: bold;
+            text-shadow: 0 0 30px rgba(190,242,2,0.5);
+        }
+
+        .comment {
+            font-size: 1.5em;
+            color: #fff;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+
+        .docs-link {
+            display: inline-block;
+            margin: 20px 0;
+            color: #BEF202;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .docs-link:hover {
+            text-decoration: underline;
+            text-shadow: 0 0 10px rgba(190,242,2,0.5);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(30,30,30,0.8);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid rgba(190,242,2,0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #BEF202;
+            transition: width 0.3s;
+            box-shadow: 0 0 10px rgba(190,242,2,0.6);
+        }
+
+        .admin-link {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(190,242,2,0.3);
+            text-decoration: none;
+            font-size: 0.8em;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .admin-link:hover {
+            color: #BEF202;
+        }
+
+        .question-form {
+            background: rgba(30,30,30,0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid rgba(190,242,2,0.2);
+        }
+
+        .question-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+
+        .question-item {
+            background: rgba(30,30,30,0.6);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(190,242,2,0.2);
+            color: #fff;
+        }
+
+        .question-item strong {
+            color: #BEF202;
+        }
+
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.85em;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .saved-name {
+            color: #BEF202;
+            font-size: 1.2em;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .username-note {
+            color: #888;
+            font-size: 0.9em;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #BEF202;
+            border-radius: 10px;
+            padding: 15px 20px;
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(190,242,2,0.3);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        }
+
+        .notification.error {
+            border-color: #ff4444;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255,68,68,0.3);
+        }
+
+        .notification.success {
+            border-color: #BEF202;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(30,30,30,0.6);
+            border-radius: 10px;
+            border: 1px solid rgba(190,242,2,0.2);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            color: #BEF202;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(30,30,30,0.8);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid rgba(190,242,2,0.3);
+            color: #BEF202;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .kbd-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(30,30,30,0.8);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(190,242,2,0.2);
+            color: #888;
+            font-size: 0.85em;
+            z-index: 100;
+        }
+
+        .kbd {
+            background: rgba(190,242,2,0.2);
+            color: #BEF202;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 0 2px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -533,1136 +536,1101 @@
             <p class="subtitle">Test your Raiku knowledge - 20 questions per session</p>
         </div>
 
-```
-    <!-- Welcome Screen -->
-    <div class="welcome-screen active">
-        <div id="savedNameDisplay"></div>
-        <div class="input-group" id="nameInputGroup">
-            <label for="playerName">Enter your name:</label>
-            <input type="text" id="playerName" placeholder="Your name here..." onkeypress="if(event.key==='Enter') startQuiz()">
-            <p class="username-note">⚠️ Usernames are unique and permanent. Choose wisely!</p>
-        </div>
-        <button class="btn" onclick="startQuiz()">Start Quiz</button>
-        
-        <div class="leaderboard" id="welcomeLeaderboard">
-            <h2>🏆 Leaderboard</h2>
-            <div id="welcomeLeaderboardList"></div>
-        </div>
-    </div>
-
-    <!-- Quiz Screen -->
-    <div class="quiz-screen">
-        <div class="timer" id="quizTimer">0:00</div>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-        
-        <div class="question-container">
-            <div class="question-header">
-                <span id="questionNumber">Question 1 of 20</span>
-                <span id="questionCategory"></span>
+        <!-- Welcome Screen -->
+        <div class="welcome-screen active">
+            <div id="savedNameDisplay"></div>
+            <div class="input-group" id="nameInputGroup">
+                <label for="playerName">Enter your name:</label>
+                <input type="text" id="playerName" placeholder="Your name here..." onkeypress="if(event.key==='Enter') startQuiz()">
+                <p class="username-note">⚠️ Usernames are unique and permanent. Choose wisely!</p>
             </div>
-            <div class="question-text" id="questionText"></div>
-            <div class="options" id="optionsContainer"></div>
-        </div>
-
-        <div class="navigation">
-            <button class="btn btn-secondary" onclick="previousQuestion()" id="prevBtn">Previous</button>
-            <button class="btn" onclick="nextQuestion()" id="nextBtn">Next</button>
-        </div>
-
-        <div class="kbd-hint">
-            <kbd class="kbd">←</kbd> Previous • 
-            <kbd class="kbd">→</kbd> Next • 
-            <kbd class="kbd">1-4</kbd> Select option
-        </div>
-    </div>
-
-    <!-- Results Screen -->
-    <div class="results-screen">
-        <div class="results-container">
-            <h2>Quiz Complete! 🎉</h2>
-            <div class="score-display" id="finalScore"></div>
-            <div class="comment" id="finalComment"></div>
+            <button class="btn" onclick="startQuiz()">Start Quiz</button>
             
-            <div class="stats-bar" id="statsBar"></div>
+            <div class="leaderboard" id="welcomeLeaderboard">
+                <h2>🏆 Leaderboard</h2>
+                <div id="welcomeLeaderboardList"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="quiz-screen">
+            <div class="timer" id="quizTimer">0:00</div>
             
-            <a href="https://docs.raiku.com" target="_blank" class="docs-link">📚 Explore the Docs</a>
-            <br>
-            <button class="btn" onclick="restartQuiz()" style="margin-top: 20px;">Take Quiz Again</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-header">
+                    <span id="questionNumber">Question 1 of 20</span>
+                    <span id="questionCategory"></span>
+                </div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="previousQuestion()" id="prevBtn">Previous</button>
+                <button class="btn" onclick="nextQuestion()" id="nextBtn">Next</button>
+            </div>
+
+            <div class="kbd-hint">
+                <kbd class="kbd">←</kbd> Previous • 
+                <kbd class="kbd">→</kbd> Next • 
+                <kbd class="kbd">1-4</kbd> Select option
+            </div>
         </div>
 
-        <div class="leaderboard">
-            <h2>🏆 Leaderboard</h2>
-            <div id="resultsLeaderboardList"></div>
+        <!-- Results Screen -->
+        <div class="results-screen">
+            <div class="results-container">
+                <h2>Quiz Complete! 🎉</h2>
+                <div class="score-display" id="finalScore"></div>
+                <div class="comment" id="finalComment"></div>
+                
+                <div class="stats-bar" id="statsBar"></div>
+                
+                <a href="https://docs.raiku.com" target="_blank" class="docs-link">📚 Explore the Docs</a>
+                <br>
+                <button class="btn" onclick="restartQuiz()" style="margin-top: 20px;">Take Quiz Again</button>
+            </div>
+
+            <div class="leaderboard">
+                <h2>🏆 Leaderboard</h2>
+                <div id="resultsLeaderboardList"></div>
+            </div>
+        </div>
+
+        <!-- Admin Screen -->
+        <div class="admin-screen">
+            <h2 style="color: #BEF202; margin-bottom: 20px;">Admin Panel</h2>
+            
+            <div class="admin-actions">
+                <button class="btn btn-small" onclick="showRegisteredUsers()">👥 Manage Users</button>
+                <button class="btn btn-small" onclick="showAddQuestion()">➕ Add Question</button>
+                <button class="btn btn-small" onclick="showQuestionList()">📝 View Questions</button>
+                <button class="btn btn-small" onclick="showAdminManagement()">🔐 Manage Admins</button>
+                <button class="btn btn-secondary btn-small" onclick="exitAdmin()">← Exit Admin</button>
+            </div>
+
+            <div id="adminContent"></div>
         </div>
     </div>
 
-    <!-- Admin Screen -->
-    <div class="admin-screen">
-        <h2 style="color: #BEF202; margin-bottom: 20px;">Admin Panel</h2>
-        
-        <div class="admin-actions">
-            <button class="btn btn-small" onclick="showRegisteredUsers()">👥 Manage Users</button>
-            <button class="btn btn-small" onclick="showAddQuestion()">➕ Add Question</button>
-            <button class="btn btn-small" onclick="showQuestionList()">📝 View Questions</button>
-            <button class="btn btn-small" onclick="showAdminManagement()">🔐 Manage Admins</button>
-            <button class="btn btn-secondary btn-small" onclick="exitAdmin()">← Exit Admin</button>
-        </div>
+    <a href="#" class="admin-link" onclick="showAdminLogin(); return false;">⚙️</a>
 
-        <div id="adminContent"></div>
-    </div>
-</div>
+    <script>
+        // Quiz state
+        let currentPlayer = '';
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let quizQuestions = [];
+        let scores = [];
+        let askedQuestions = [];
+        let customQuestions = [];
+        let adminUsers = [];
+        let registeredUsers = [];
 
-<a href="#" class="admin-link" onclick="showAdminLogin(); return false;">⚙️</a>
+        // Default admin password (change this!)
+        const MASTER_PASSWORD = 'raiku2025';
 
-<script>
-    // Quiz state
-    let currentPlayer = '';
-    let currentQuestionIndex = 0;
-    let userAnswers = [];
-    let quizQuestions = [];
-    let scores = [];
-    let askedQuestions = [];
-    let customQuestions = [];
-    let adminUsers = [];
-    let registeredUsers = [];
-
-    // Default admin password (change this!)
-    const MASTER_PASSWORD = 'raiku2025';
-
-    // Cookie functions
-    function setCookie(name, value, days) {
-        const expires = new Date();
-        expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-        document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
-    }
-
-    function getCookie(name) {
-        const nameEQ = name + '=';
-        const ca = document.cookie.split(';');
-        for(let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        // Cookie functions
+        function setCookie(name, value, days) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+            document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
         }
-        return null;
-    }
 
-    function deleteCookie(name) {
-        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
-    }
+        function getCookie(name) {
+            const nameEQ = name + '=';
+            const ca = document.cookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
 
-    // Notification system
-    function showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
+        function deleteCookie(name) {
+            document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
+        }
 
-        setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease';
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
             setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 300);
-        }, 3000);
-    }
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        const activeScreen = document.querySelector('.quiz-screen.active');
-        if (!activeScreen) return;
-
-        if (e.key === 'ArrowRight' || e.key === 'Enter') {
-            e.preventDefault();
-            nextQuestion();
-        } else if (e.key === 'ArrowLeft') {
-            e.preventDefault();
-            previousQuestion();
-        } else if (e.key >= '1' && e.key <= '4') {
-            e.preventDefault();
-            selectOption(parseInt(e.key) - 1);
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
         }
-    });
 
-    // Timer for quiz
-    let quizStartTime = null;
-    let timerInterval = null;
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            const activeScreen = document.querySelector('.quiz-screen.active');
+            if (!activeScreen) return;
 
-    function startTimer() {
-        quizStartTime = Date.now();
-        const timerEl = document.getElementById('quizTimer');
+            if (e.key === 'ArrowRight' || e.key === 'Enter') {
+                e.preventDefault();
+                nextQuestion();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousQuestion();
+            } else if (e.key >= '1' && e.key <= '4') {
+                e.preventDefault();
+                selectOption(parseInt(e.key) - 1);
+            }
+        });
+
+        // Timer for quiz
+        let quizStartTime = null;
+        let timerInterval = null;
+
+        function startTimer() {
+            quizStartTime = Date.now();
+            const timerEl = document.getElementById('quizTimer');
+            }
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
         
-        timerInterval = setInterval(() => {
-            const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
-            const minutes = Math.floor(elapsed / 60);
-            const seconds = elapsed % 60;
-            timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }, 1000);
-    }
 
-    function stopTimer() {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
-        return quizStartTime ? Math.floor((Date.now() - quizStartTime) / 1000) : 0;
-    }
-
-    // Base questions - 200+ quality questions about Raiku
-    const baseQuestions = [
-        // Funding & Investors
-        { id: 1, category: 'Funding', question: 'How much total funding has Raiku raised?', options: ['$13.5 million', '$10 million', '$20 million', '$5 million'], correct: 0 },
-        { id: 2, category: 'Funding', question: 'How much was raised in Raiku\'s Seed round?', options: ['$11.25 million', '$10 million', '$13.5 million', '$5 million'], correct: 0 },
-        { id: 3, category: 'Funding', question: 'How much was raised in Raiku\'s Pre-Seed round?', options: ['$2.25 million', '$5 million', '$1 million', '$3 million'], correct: 0 },
-        { id: 4, category: 'Investors', question: 'Which firm led Raiku\'s Seed round?', options: ['Pantera Capital', 'Figment Capital', 'Jump Crypto', 'Lightspeed Faction'], correct: 0 },
-        { id: 5, category: 'Investors', question: 'Which two firms co-led Raiku\'s Pre-Seed round?', options: ['Figment Capital and Big Brain Holdings', 'Pantera and Jump', 'Lightspeed and Reciprocal', 'Hashkey and Initial'], correct: 0 },
-        { id: 6, category: 'Investors', question: 'Which major crypto firm participated in Raiku\'s Seed round?', options: ['Jump Crypto', 'a16z', 'Sequoia', 'Paradigm'], correct: 0 },
-        { id: 7, category: 'Investors', question: 'Is Lightspeed Faction an investor in Raiku?', options: ['Yes', 'No', 'Only as an advisor', 'Only in Pre-Seed'], correct: 0 },
-        { id: 8, category: 'Investors', question: 'Is Hashkey Capital an investor in Raiku?', options: ['Yes, in Seed round', 'No', 'Only in Pre-Seed', 'Only as advisor'], correct: 0 },
-        { id: 9, category: 'Investors', question: 'Which of these is NOT a Raiku investor?', options: ['Sequoia Capital', 'Pantera Capital', 'Jump Crypto', 'Figment Capital'], correct: 0 },
-        { id: 10, category: 'Investors', question: 'Reciprocal Ventures participated in which Raiku rounds?', options: ['Both Pre-Seed and Seed', 'Only Seed', 'Only Pre-Seed', 'Neither'], correct: 0 },
-
-        // Angel Investors
-        { id: 11, category: 'Angels', question: 'Which Solana co-founder is an angel investor in Raiku?', options: ['Anatoly Yakovenko', 'Vitalik Buterin', 'Do Kwon', 'Sam Bankman-Fried'], correct: 0 },
-        { id: 12, category: 'Angels', question: 'Is Austin Federa an angel investor in Raiku?', options: ['Yes', 'No', 'Only advisor', 'Unknown'], correct: 0 },
-        { id: 13, category: 'Angels', question: 'Which organization\'s members are angel investors in Raiku?', options: ['Anza', 'Ethereum Foundation', 'Bitcoin Core', 'Cardano'], correct: 0 },
-        { id: 14, category: 'Angels', question: 'Are there angel investors from Jupiter in Raiku?', options: ['Yes', 'No', 'Only advisors', 'Unknown'], correct: 0 },
-        { id: 15, category: 'Angels', question: 'Kash Dhanda is associated with Raiku as...', options: ['Angel investor', 'Lead investor', 'CMO', 'CTO'], correct: 0 },
-
-        // Team & Leadership
-        { id: 16, category: 'Team', question: 'Who is the CEO and co-founder of Raiku?', options: ['Robin Nordnes', 'Anatoly Yakovenko', 'Austin Federa', 'Offmylawn'], correct: 0 },
-        { id: 17, category: 'Community', question: 'Who is the CMO of Raiku\'s Discord server?', options: ['Offmylawn', 'Robin Nordnes', 'Anatoly Yakovenko', 'Austin Federa'], correct: 0 },
-
-        // Solana Circuit
-        { id: 18, category: 'Solana Circuit', question: 'How many Solana Circuit spaces has Raiku held so far?', options: ['12', '10', '15', '8'], correct: 0 },
-        { id: 19, category: 'Solana Circuit', question: 'Who was the first guest on Raiku\'s first Solana Circuit?', options: ['Pye Finance', 'Jumper Exchange', 'Jupiter', 'Anza'], correct: 0 },
-        { id: 20, category: 'Solana Circuit', question: 'Who was the last guest on Raiku\'s Solana Circuit?', options: ['Jumper Exchange', 'Pye Finance', 'Anza', 'Sanctum'], correct: 0 },
-
-        // Discord Roles
-        { id: 21, category: 'Community', question: 'What is the role for top supporters on Raiku Discord?', options: ['Raiku Chad', 'Dragon Master', 'Raiku Legend', 'Top Supporter'], correct: 0 },
-        { id: 22, category: 'Community', question: 'What is the other special role for top supporters besides "Raiku Chad"?', options: ['The Inevitable', 'Dragon Lord', 'Elite Member', 'Raiku VIP'], correct: 0 },
-
-        // Technology - JIT
-        { id: 23, category: 'JIT', question: 'What does JIT stand for in Raiku\'s context?', options: ['Just-in-Time', 'Jump In Transaction', 'Joint Integration Tool', 'Join In Thread'], correct: 0 },
-        { id: 24, category: 'JIT', question: 'JIT in Raiku enables...', options: ['Just-in-time slot reservation', 'Joint blockchain integration', 'JavaScript tooling', 'Jump trading'], correct: 0 },
-        { id: 25, category: 'JIT', question: 'JIT slot reservation helps with...', options: ['Guaranteed transaction inclusion', 'Faster downloads', 'Better graphics', 'Lower fees only'], correct: 0 },
-        { id: 26, category: 'JIT', question: 'When does JIT compilation happen in Raiku?', options: ['At transaction execution time', 'Before deployment', 'During download', 'Never'], correct: 0 },
-        { id: 27, category: 'JIT', question: 'JIT is particularly useful for...', options: ['High-frequency trading', 'Simple transfers', 'NFT minting', 'Staking only'], correct: 0 },
-
-        // Technology - AOT
-        { id: 28, category: 'AOT', question: 'What does AOT stand for in Raiku?', options: ['Ahead-of-Time', 'All-Over-Time', 'After-Of-Time', 'Around-On-Time'], correct: 0 },
-        { id: 29, category: 'AOT', question: 'AOT compilation in Raiku happens...', options: ['Before execution time', 'During runtime', 'After errors', 'Never'], correct: 0 },
-        { id: 30, category: 'AOT', question: 'AOT slot reservation enables...', options: ['Pre-scheduled transaction execution', 'Random execution', 'Delayed processing', 'Fee reduction'], correct: 0 },
-        { id: 31, category: 'AOT', question: 'The benefit of AOT in Raiku is...', options: ['Predictable execution timing', 'Cheaper transactions', 'Faster internet', 'Better UI'], correct: 0 },
-        { id: 32, category: 'AOT', question: 'AOT is better for applications that need...', options: ['Deterministic control', 'Random outcomes', 'Slow processing', 'High fees'], correct: 0 },
-
-        // Technology - Siqos
-        { id: 33, category: 'Siqos', question: 'Siqos in Raiku refers to...', options: ['Scheduling and coordination system', 'A token name', 'A wallet type', 'A game'], correct: 0 },
-        { id: 34, category: 'Siqos', question: 'Siqos helps Raiku achieve...', options: ['Better transaction coordination', 'Lower prices', 'Faster downloads', 'More colors'], correct: 0 },
-        { id: 35, category: 'Siqos', question: 'The main purpose of Siqos is...', options: ['Efficient execution scheduling', 'Image processing', 'Audio encoding', 'Video streaming'], correct: 0 },
-
-        // Use Cases
-        { id: 36, category: 'Use Cases', question: 'Raiku is built primarily for...', options: ['Institutional-grade trading', 'Gaming only', 'Social media', 'Video streaming'], correct: 0 },
-        { id: 37, category: 'Use Cases', question: 'Which use case does Raiku specifically target?', options: ['High-frequency trading', 'NFT marketplaces only', 'Metaverse games', 'Music streaming'], correct: 0 },
-        { id: 38, category: 'Use Cases', question: 'Raiku enables applications requiring...', options: ['Guaranteed inclusion', 'Random execution', 'Slow confirmation', 'High latency'], correct: 0 },
-        { id: 39, category: 'Use Cases', question: 'DePIN applications can benefit from Raiku because...', options: ['It provides reliable execution', 'It\'s free', 'It\'s colorful', 'It\'s old'], correct: 0 },
-        { id: 40, category: 'Use Cases', question: 'AI applications benefit from Raiku\'s...', options: ['Low-latency compute', 'High fees', 'Slow processing', 'Complex UI'], correct: 0 },
-        { id: 41, category: 'Use Cases', question: 'Raiku is designed for applications that need...', options: ['Predictability and precision', 'Randomness', 'Delays', 'Uncertainty'], correct: 0 },
-        { id: 42, category: 'Use Cases', question: 'Compliance-sensitive services benefit from Raiku because...', options: ['It offers deterministic execution', 'It\'s anonymous', 'It\'s slow', 'It\'s expensive'], correct: 0 },
-
-        // Blockchain & Infrastructure
-        { id: 43, category: 'Infrastructure', question: 'Raiku is built on which blockchain?', options: ['Solana', 'Ethereum', 'Bitcoin', 'Cardano'], correct: 0 },
-        { id: 44, category: 'Infrastructure', question: 'Raiku operates as a...', options: ['Coordination layer', 'Separate L1', 'Sidechain', 'Wrapped token'], correct: 0 },
-        { id: 45, category: 'Infrastructure', question: 'Raiku enhances Solana by...', options: ['Enabling better coordination', 'Replacing it', 'Slowing it down', 'Removing features'], correct: 0 },
-        { id: 46, category: 'Infrastructure', question: 'Raiku\'s architecture includes...', options: ['Validator-run sidecars', 'Only smart contracts', 'Proof-of-work', 'Manual operations'], correct: 0 },
-        { id: 47, category: 'Infrastructure', question: 'Raiku\'s block building uses...', options: ['Specialized validators', 'Random nodes', 'Central servers', 'User devices'], correct: 0 },
-        { id: 48, category: 'Infrastructure', question: 'Raiku guarantees transaction inclusion through...', options: ['Advanced scheduling engine', 'Random selection', 'Manual review', 'Lottery system'], correct: 0 },
-
-        // Performance
-        { id: 49, category: 'Performance', question: 'Raiku achieves sub-50ms...', options: ['Pre-confirmations', 'Full finality', 'Block times', 'Network delays'], correct: 0 },
-        { id: 50, category: 'Performance', question: 'Raiku\'s reliability is rated at...', options: ['>99.9%', '50%', '80%', '60%'], correct: 0 },
-        { id: 51, category: 'Performance', question: 'Raiku places compute...', options: ['Close to where transactions happen', 'Far from users', 'On central servers', 'In the cloud only'], correct: 0 },
-        { id: 52, category: 'Performance', question: 'Raiku enables execution on...', options: ['Microsecond precision', 'Hour precision', 'Day precision', 'Week precision'], correct: 0 },
-        { id: 53, category: 'Performance', question: 'On Solana, what percentage of HFT transactions typically fail?', options: ['Over 95%', '10%', '5%', '1%'], correct: 0 },
-
-        // Validator Partnerships
-        { id: 54, category: 'Validators', question: 'Which validator is a Raiku partner?', options: ['Figment', 'Random Validator Inc', 'Solo Staker', 'Home Node'], correct: 0 },
-        { id: 55, category: 'Validators', question: 'Is Kiln a validator partner of Raiku?', options: ['Yes', 'No', 'Only advisor', 'Unknown'], correct: 0 },
-        { id: 56, category: 'Validators', question: 'Is Everstake partnered with Raiku?', options: ['Yes', 'No', 'Only as investor', 'Unknown'], correct: 0 },
-        { id: 57, category: 'Validators', question: 'Which of these is a Raiku validator partner?', options: ['Staking Facilities', 'Random Staker', 'Solo Validator', 'Home Staker'], correct: 0 },
-        { id: 58, category: 'Validators', question: 'Is Blockdaemon a Raiku validator partner?', options: ['Yes', 'No', 'Only investor', 'Unknown'], correct: 0 },
-        { id: 59, category: 'Validators', question: 'Chorus One is a...', options: ['Raiku validator partner', 'Competitor', 'Unrelated company', 'Token'], correct: 0 },
-
-        // Future & Vision
-        { id: 60, category: 'Future', question: 'Raiku is building infrastructure for...', options: ['Institutional execution on Solana', 'Gaming only', 'Social media', 'Music streaming'], correct: 0 },
-        { id: 61, category: 'Future', question: 'Raiku aims to enable...', options: ['Certainty for institutional trading', 'Random outcomes', 'Slow execution', 'High unpredictability'], correct: 0 },
-        { id: 62, category: 'Future', question: 'Raiku\'s vision includes making Solana viable for...', options: ['Regulated financial services', 'Gambling only', 'Anonymous transactions', 'Unregulated activity'], correct: 0 },
-        { id: 63, category: 'Future', question: 'Raiku is developing support for...', options: ['Real-time payments', 'Delayed transactions', 'Offline payments', 'Paper money'], correct: 0 },
-        { id: 64, category: 'Future', question: 'The Global Account Model will support...', options: ['Multiple VM environments', 'Only SVM', 'Only EVM', 'No VMs'], correct: 0 },
-        { id: 65, category: 'Future', question: 'Raiku plans to enable developers to...', options: ['Deploy across SVM, EVM, and Move', 'Use only Solidity', 'Use only Rust', 'Use no code'], correct: 0 },
-
-        // Problem Solving
-        { id: 66, category: 'Problem', question: 'What problem does Raiku solve?', options: ['Transaction unpredictability', 'High gas fees only', 'Slow internet', 'Bad design'], correct: 0 },
-        { id: 67, category: 'Problem', question: 'Raiku addresses the coordination problem in...', options: ['Distributed networks', 'Centralized databases', 'Local files', 'Single machines'], correct: 0 },
-        { id: 68, category: 'Problem', question: 'Without Raiku, institutional apps on Solana face...', options: ['Unpredictable execution', 'Perfect execution', 'No issues', 'Low performance'], correct: 0 },
-        { id: 69, category: 'Problem', question: 'Raiku makes crypto apps...', options: ['As reliable as traditional tech', 'Less reliable', 'Slower', 'More complex'], correct: 0 },
-
-        // Integration
-        { id: 70, category: 'Integration', question: 'Developers can integrate Raiku lite mode with...', options: ['As little as two lines of code', 'Thousands of lines', 'Complete rewrite', 'No code'], correct: 0 },
-        { id: 71, category: 'Integration', question: 'Raiku offers integration that is...', options: ['Simple and lightweight', 'Complex and heavy', 'Impossible', 'Deprecated'], correct: 0 },
-
-        // General Knowledge
-        { id: 72, category: 'General', question: 'Raiku launched in which year?', options: ['2024', '2020', '2023', '2025'], correct: 0 },
-        { id: 73, category: 'General', question: 'The Raiku website is...', options: ['www.raiku.com', 'www.raiku.io', 'www.raiku.org', 'www.raiku.net'], correct: 0 },
-        { id: 74, category: 'General', question: 'Raiku\'s documentation can be found at...', options: ['docs.raiku.com', 'github.com/raiku', 'raiku.wiki', 'raiku.gitbook'], correct: 0 },
-        { id: 75, category: 'General', question: 'Raiku has a community on...', options: ['Discord', 'Telegram only', 'WhatsApp', 'SMS'], correct: 0 },
-        { id: 76, category: 'General', question: 'Raiku is active on X (Twitter) at...', options: ['@raikucom', '@raiku', '@raikuchain', '@raikuio'], correct: 0 },
-
-        // Technical Details
-        { id: 77, category: 'Technical', question: 'Raiku introduces a...', options: ['Two-sided execution marketplace', 'One-way system', 'Closed system', 'Manual marketplace'], correct: 0 },
-        { id: 78, category: 'Technical', question: 'Raiku includes a programmable...', options: ['Scheduler (Ackermann-node)', 'Random generator', 'Manual operator', 'Simple timer'], correct: 0 },
-        { id: 79, category: 'Technical', question: 'Raiku uses edge compute that operates...', options: ['Outside consensus but coordinated', 'Inside consensus only', 'Completely separate', 'Manually'], correct: 0 },
-        { id: 80, category: 'Technical', question: 'Raiku\'s architecture enables...', options: ['Deterministic guarantees', 'Random results', 'Unpredictable outcomes', 'Delayed execution'], correct: 0 },
-
-        // Comparisons
-        { id: 81, category: 'Comparison', question: 'Compared to other L1s, Raiku on Solana offers...', options: ['Better coordination and certainty', 'Lower performance', 'Higher unpredictability', 'No advantages'], correct: 0 },
-        { id: 82, category: 'Comparison', question: 'Raiku enables Solana to compete with...', options: ['Arbitrum for institutional use', 'Only gaming chains', 'Social media platforms', 'Search engines'], correct: 0 },
-        { id: 83, category: 'Comparison', question: 'Why might Robinhood have chosen Arbitrum over Solana?', options: ['Lack of guaranteed execution', 'Lower speed', 'Better colors', 'Cheaper'], correct: 0 },
-
-        // Market & Adoption
-        { id: 84, category: 'Market', question: 'Raiku targets which market segment?', options: ['Institutional DeFi', 'Retail gaming only', 'Social media', 'E-commerce'], correct: 0 },
-        { id: 85, category: 'Market', question: 'Raiku enables...', options: ['Institutional-grade certainty', 'Retail speculation only', 'Random trading', 'Gambling'], correct: 0 },
-
-        // More Technical Depth
-        { id: 86, category: 'Technical', question: 'Raiku\'s validator sidecars enable...', options: ['Off-chain computation coordination', 'On-chain storage', 'Random execution', 'Manual processing'], correct: 0 },
-        { id: 87, category: 'Technical', question: 'The Ackermann-node in Raiku is responsible for...', options: ['Programmable scheduling', 'Random selection', 'Manual control', 'Storage only'], correct: 0 },
-        { id: 88, category: 'Technical', question: 'Raiku maintains Solana\'s...', options: ['Speed and composability', 'Slowness', 'Complexity', 'Limitations'], correct: 0 },
-        { id: 89, category: 'Technical', question: 'Raiku adds to Solana...', options: ['Predictability and auditability', 'Random features', 'Slower execution', 'More bugs'], correct: 0 },
-        { id: 90, category: 'Technical', question: 'Raiku operates as an...', options: ['Off-chain edge compute layer', 'On-chain contract only', 'Central server', 'Mobile app'], correct: 0 },
-
-        // Strategic Positioning
-        { id: 91, category: 'Strategy', question: 'Raiku positions itself as...', options: ['Essential infrastructure for Solana', 'A competitor to Solana', 'A gaming platform', 'An NFT marketplace'], correct: 0 },
-        { id: 92, category: 'Strategy', question: 'Raiku\'s approach is to...', options: ['Enhance not replace', 'Replace Solana', 'Compete with Solana', 'Ignore Solana'], correct: 0 },
-        { id: 93, category: 'Strategy', question: 'Raiku enables new...', options: ['Validator revenue opportunities', 'User fees only', 'Developer costs', 'Complexity'], correct: 0 },
-
-        // Developer Focus
-        { id: 94, category: 'Developers', question: 'Raiku gives developers...', options: ['Control over execution timing', 'No control', 'Random timing', 'Delayed execution'], correct: 0 },
-        { id: 95, category: 'Developers', question: 'Developers can use Raiku to...', options: ['Build predictable applications', 'Create random apps', 'Make slow apps', 'Build buggy software'], correct: 0 },
-        { id: 96, category: 'Developers', question: 'Raiku enables developers to implement...', options: ['Custom sequencing policies', 'Random policies', 'No policies', 'Manual policies'], correct: 0 },
-        { id: 97, category: 'Developers', question: 'With Raiku, developers can apply...', options: ['Off-chain compliance logic', 'No logic', 'Random logic', 'Slow logic'], correct: 0 },
-
-        // Industry Impact
-        { id: 98, category: 'Impact', question: 'Raiku addresses a gap in...', options: ['Solana\'s institutional readiness', 'Gaming infrastructure', 'Social media tools', 'E-commerce platforms'], correct: 0 },
-        { id: 99, category: 'Impact', question: 'Raiku makes possible...', options: ['Real-world crypto deployment', 'Only toy applications', 'Slow adoption', 'Limited use'], correct: 0 },
-        { id: 100, category: 'Impact', question: 'For DeFi to go institutional, it needs...', options: ['Raiku-level certainty', 'Random execution', 'Slow confirmation', 'High fees'], correct: 0 },
-
-        // Execution Guarantees
-        { id: 101, category: 'Guarantees', question: 'Raiku guarantees...', options: ['Block inclusion', 'Random failure', 'Slow execution', 'High latency'], correct: 0 },
-        { id: 102, category: 'Guarantees', question: 'With Raiku, transactions...', options: ['Land predictably', 'May fail randomly', 'Always fail', 'Never execute'], correct: 0 },
-        { id: 103, category: 'Guarantees', question: 'Raiku provides deterministic...', options: ['Execution outcomes', 'Random results', 'Unknown outcomes', 'Failed results'], correct: 0 },
-
-        // System Reliability
-        { id: 104, category: 'Reliability', question: 'Raiku system reliability...', options: ['Never fails under pressure', 'Fails often', 'Is unpredictable', 'Is untested'], correct: 0 },
-        { id: 105, category: 'Reliability', question: 'Raiku is designed to handle...', options: ['Extreme stress and scale', 'Low volume only', 'Simple tasks', 'Basic operations'], correct: 0 },
-
-        // Latency & Speed
-        { id: 106, category: 'Performance', question: 'Raiku offers control where...', options: ['Milliseconds matter', 'Hours matter', 'Days matter', 'Time doesn\'t matter'], correct: 0 },
-        { id: 107, category: 'Performance', question: 'Raiku achieves...', options: ['Low latency with control', 'High latency', 'Random latency', 'No latency control'], correct: 0 },
-
-        // Application Logic
-        { id: 108, category: 'Developers', question: 'Raiku gives builders freedom to...', options: ['Shape low-level application logic', 'Use only templates', 'No customization', 'Follow strict rules'], correct: 0 },
-        { id: 109, category: 'Developers', question: 'With Raiku, builders have...', options: ['Unparalleled control', 'No control', 'Limited control', 'Random control'], correct: 0 },
-
-        // Marketplace
-        { id: 110, category: 'Economics', question: 'Raiku creates a marketplace for...', options: ['Blockspace and execution', 'Only tokens', 'NFTs only', 'Physical goods'], correct: 0 },
-        { id: 111, category: 'Economics', question: 'Raiku\'s marketplace aligns incentives for...', options: ['Developers, validators, institutions', 'Only users', 'Only validators', 'Only developers'], correct: 0 },
-
-        // Network Coordination
-        { id: 112, category: 'Infrastructure', question: 'Raiku solves a...', options: ['Fundamental coordination problem', 'Storage problem', 'Network speed issue', 'UI problem'], correct: 0 },
-        { id: 113, category: 'Infrastructure', question: 'Raiku makes distributed networks...', options: ['More coordinated', 'More random', 'Less efficient', 'Slower'], correct: 0 },
-
-        // Real-World Applications
-        { id: 114, category: 'Use Cases', question: 'Raiku enables...', options: ['Tokenized stock platforms', 'Only simple transfers', 'Basic payments', 'No real use cases'], correct: 0 },
-        { id: 115, category: 'Use Cases', question: 'If Raiku existed earlier, platforms like Robinhood could...', options: ['Build natively on Solana', 'Still avoid Solana', 'Use Ethereum', 'Use Bitcoin'], correct: 0 },
-
-        // Protocol Features
-        { id: 116, category: 'Technical', question: 'Raiku decouples...', options: ['Block-building process', 'Nothing', 'User interface', 'Storage'], correct: 0 },
-        { id: 117, category: 'Technical', question: 'Raiku enables validators to...', options: ['Specialize and differentiate', 'All do the same thing', 'Compete randomly', 'Stop validating'], correct: 0 },
-
-        // Ecosystem Benefits
-        { id: 118, category: 'Ecosystem', question: 'Raiku unlocks for Solana...', options: ['Higher performance and reliability', 'Lower performance', 'More complexity', 'Less throughput'], correct: 0 },
-        { id: 119, category: 'Ecosystem', question: 'Raiku enables...', options: ['Scalable throughput', 'Limited capacity', 'Low throughput', 'No scaling'], correct: 0 },
-        { id: 120, category: 'Ecosystem', question: 'Raiku creates...', options: ['Richer application experiences', 'Simpler apps only', 'Limited features', 'No applications'], correct: 0 },
-
-        // Institutional Requirements
-        { id: 121, category: 'Institutional', question: 'Institutions need...', options: ['Certainty not just speed', 'Only speed', 'Only low fees', 'Random execution'], correct: 0 },
-        { id: 122, category: 'Institutional', question: 'For institutions, being able to predict...', options: ['When transactions land is crucial', 'Is not important', 'Doesn\'t matter', 'Is impossible'], correct: 0 },
-        { id: 123, category: 'Institutional', question: 'Institutional strategies require...', options: ['Microsecond precision', 'Hour precision', 'Day precision', 'No precision'], correct: 0 },
-
-        // Competitive Advantages
-        { id: 124, category: 'Advantages', question: 'Raiku\'s key advantage is...', options: ['Guaranteed outcomes', 'Lower cost only', 'Better UI', 'More marketing'], correct: 0 },
-        { id: 125, category: 'Advantages', question: 'Raiku offers something that base Solana doesn\'t...', options: ['Execution guarantees', 'High speed', 'Low fees', 'Smart contracts'], correct: 0 },
-
-        // Development Tools
-        { id: 126, category: 'Developers', question: 'Raiku provides...', options: ['Multiple integration options', 'One way only', 'No tools', 'Manual setup'], correct: 0 },
-        { id: 127, category: 'Developers', question: 'Raiku lite mode requires...', options: ['Minimal code changes', 'Complete rewrite', 'No code', 'Thousands of lines'], correct: 0 },
-
-        // Infrastructure Evolution
-        { id: 128, category: 'Future', question: 'Raiku represents...', options: ['The next evolution of Solana', 'A replacement for Solana', 'A competing chain', 'An unrelated project'], correct: 0 },
-        { id: 129, category: 'Future', question: 'Raiku enables Solana to handle...', options: ['Institutional workloads', 'Only retail trading', 'Only NFTs', 'Only gaming'], correct: 0 },
-
-        // Technical Innovation
-        { id: 130, category: 'Innovation', question: 'Raiku innovates on...', options: ['Block building architecture', 'Nothing new', 'UI design', 'Marketing'], correct: 0 },
-        { id: 131, category: 'Innovation', question: 'Raiku\'s edge compute approach is...', options: ['Novel and necessary', 'Old technology', 'Unnecessary', 'Deprecated'], correct: 0 },
-
-        // Compliance & Regulation
-        { id: 132, category: 'Compliance', question: 'Raiku enables...', options: ['Off-chain compliance logic', 'No compliance', 'Random compliance', 'Manual compliance'], correct: 0 },
-        { id: 133, category: 'Compliance', question: 'For regulated services, Raiku provides...', options: ['Required determinism', 'Random execution', 'No guarantees', 'Uncertain outcomes'], correct: 0 },
-
-        // Execution Control
-        { id: 134, category: 'Control', question: 'Raiku gives applications control over...', options: ['Transaction ordering', 'Nothing', 'Only timing', 'Only fees'], correct: 0 },
-        { id: 135, category: 'Control', question: 'Custom sequencing with Raiku allows...', options: ['Application-specific logic', 'Random ordering', 'No customization', 'Default behavior only'], correct: 0 },
-
-        // Network Effects
-        { id: 136, category: 'Network', question: 'Raiku maintains Solana\'s...', options: ['Liquidity and composability', 'Limitations', 'Complexity', 'Slowness'], correct: 0 },
-        { id: 137, category: 'Network', question: 'Applications on Raiku can leverage...', options: ['All of Solana\'s ecosystem', 'Nothing', 'Only isolated features', 'Separate networks'], correct: 0 },
-
-        // Trading Infrastructure
-        { id: 138, category: 'Trading', question: 'Raiku enables...', options: ['Institutional trading infrastructure', 'Only retail trading', 'Manual trading', 'No trading'], correct: 0 },
-        { id: 139, category: 'Trading', question: 'For HFT, Raiku provides...', options: ['Necessary reliability', 'Random execution', 'High failure rate', 'No benefits'], correct: 0 },
-
-        // Payment Systems
-        { id: 140, category: 'Payments', question: 'Raiku enables...', options: ['Real-time payment systems', 'Delayed payments', 'Offline payments', 'No payments'], correct: 0 },
-        { id: 141, category: 'Payments', question: 'For payment applications, Raiku offers...', options: ['Guaranteed settlement', 'Random settlement', 'Failed transactions', 'No guarantees'], correct: 0 },
-
-        // Developer Experience
-        { id: 142, category: 'Developers', question: 'Raiku makes building on Solana...', options: ['More predictable', 'More random', 'Harder', 'Impossible'], correct: 0 },
-        { id: 143, category: 'Developers', question: 'Developers choose Raiku for...', options: ['Execution certainty', 'Lower performance', 'Limited features', 'No reason'], correct: 0 },
-
-        // Validator Economics
-        { id: 144, category: 'Validators', question: 'Raiku creates for validators...', options: ['New revenue streams', 'No benefits', 'Only costs', 'Reduced income'], correct: 0 },
-        { id: 145, category: 'Validators', question: 'Validators can offer with Raiku...', options: ['Differentiated services', 'Only standard services', 'No services', 'Random services'], correct: 0 },
-
-        // Market Gap
-        { id: 146, category: 'Market', question: 'Raiku fills a gap in...', options: ['Institutional blockchain infrastructure', 'Consumer gaming', 'Social media', 'E-commerce'], correct: 0 },
-        { id: 147, category: 'Market', question: 'The market Raiku targets values...', options: ['Reliability over speed alone', 'Only speed', 'Only price', 'Random features'], correct: 0 },
-
-        // Technical Architecture
-        { id: 148, category: 'Architecture', question: 'Raiku\'s architecture is...', options: ['Off-chain coordination layer', 'Pure smart contracts', 'Central server', 'Manual system'], correct: 0 },
-        { id: 149, category: 'Architecture', question: 'Raiku coordinates...', options: ['Apps, operators, and L1', 'Nothing', 'Only apps', 'Only operators'], correct: 0 },
-
-        // Execution Environment
-        { id: 150, category: 'Technical', question: 'Raiku will support...', options: ['SVM, EVM, and Move', 'Only SVM', 'Only EVM', 'No VMs'], correct: 0 },
-        { id: 151, category: 'Technical', question: 'The Global Account Model enables...', options: ['Cross-VM deployment', 'Single VM only', 'No deployment', 'Manual setup'], correct: 0 },
-
-        // Protocol Integration
-        { id: 152, category: 'Integration', question: 'Raiku integrates with Solana...', options: ['Without modifying the protocol', 'By forking Solana', 'By replacing Solana', 'Not at all'], correct: 0 },
-        { id: 153, category: 'Integration', question: 'Raiku builds...', options: ['On top of Solana', 'A separate chain', 'Nothing', 'A competitor'], correct: 0 },
-
-        // System Guarantees
-        { id: 154, category: 'Guarantees', question: 'Raiku embeds guarantees into...', options: ['Slot scheduling', 'Random processes', 'No processes', 'Manual workflows'], correct: 0 },
-        { id: 155, category: 'Guarantees', question: 'Raiku\'s guarantees are...', options: ['Deterministic', 'Random', 'Probabilistic', 'Non-existent'], correct: 0 },
-
-        // Application Requirements
-        { id: 156, category: 'Applications', question: 'Apps requiring auditability need...', options: ['Raiku-level control', 'No special infrastructure', 'Random execution', 'Slow processing'], correct: 0 },
-        { id: 157, category: 'Applications', question: 'Real-world deployment requires...', options: ['Raiku\'s predictability', 'Random behavior', 'High failure rate', 'No guarantees'], correct: 0 },
-
-        // Solana Enhancement
-        { id: 158, category: 'Enhancement', question: 'Raiku enhances Solana\'s...', options: ['Core capabilities', 'Limitations', 'Weaknesses', 'Problems'], correct: 0 },
-        { id: 159, category: 'Enhancement', question: 'With Raiku, Solana gains...', options: ['Institutional readiness', 'No benefits', 'More complexity', 'Lower performance'], correct: 0 },
-
-        // Competitive Position
-        { id: 160, category: 'Competition', question: 'Raiku makes Solana competitive with...', options: ['Arbitrum for institutions', 'Nothing', 'Bitcoin', 'Social media'], correct: 0 },
-        { id: 161, category: 'Competition', question: 'Platforms like Robinhood need what Raiku offers...', options: ['Sequencing guarantees', 'Random execution', 'No special features', 'Basic transfers'], correct: 0 },
-
-        // Technical Depth - More Questions
-        { id: 162, category: 'Technical', question: 'Raiku\'s coordination happens...', options: ['Off-chain but tightly with validators', 'Completely separate', 'On-chain only', 'Manually'], correct: 0 },
-        { id: 163, category: 'Technical', question: 'Edge computation in Raiku is positioned...', options: ['Just outside consensus', 'Far from validators', 'On user devices', 'In the cloud'], correct: 0 },
-
-        // Funding Details - More
-        { id: 164, category: 'Funding', question: 'Initial Ventures participated in which round?', options: ['Seed', 'Pre-Seed', 'Both', 'Neither'], correct: 0 },
-        { id: 165, category: 'Investors', question: 'Anagram participated in which round?', options: ['Pre-Seed', 'Seed', 'Both', 'Neither'], correct: 0 },
-
-        // Community - More
-        { id: 166, category: 'Community', question: 'Raiku holds community events called...', options: ['Solana Circuit', 'Raiku Talks', 'Dragon Sessions', 'Tech Tuesdays'], correct: 0 },
-        { id: 167, category: 'Community', question: 'Raiku\'s Friday events are called...', options: ['Friday Townhall', 'Friday Sessions', 'Weekend Talks', 'End Week Chat'], correct: 0 },
-
-        // Team - More
-        { id: 168, category: 'Team', question: 'The leadership focuses on enabling...', options: ['Institutional DeFi', 'Only gaming', 'Social media', 'E-commerce'], correct: 0 },
-
-        // Use Cases - More
-        { id: 169, category: 'Use Cases', question: 'Gaming on Raiku benefits from...', options: ['Low latency guarantees', 'Random timing', 'High latency', 'No benefits'], correct: 0 },
-        { id: 170, category: 'Use Cases', question: 'DePIN on Raiku gains...', options: ['Reliable coordination', 'Random operation', 'No advantages', 'High complexity'], correct: 0 },
-
-        // Performance - More
-        { id: 171, category: 'Performance', question: 'Raiku\'s reliability under stress is...', options: ['Exceptional', 'Poor', 'Average', 'Untested'], correct: 0 },
-        { id: 172, category: 'Performance', question: 'System scale with Raiku...', options: ['Increases reliably', 'Decreases', 'Stays fixed', 'Is random'], correct: 0 },
-
-        // Validators - More
-        { id: 173, category: 'Validators', question: 'H2O Nodes is a...', options: ['Raiku validator partner', 'Competitor', 'User', 'Token'], correct: 0 },
-        { id: 174, category: 'Validators', question: 'Validators benefit from Raiku through...', options: ['New revenue opportunities', 'No benefits', 'Only costs', 'Lower income'], correct: 0 },
-
-        // Strategic - More
-        { id: 175, category: 'Strategy', question: 'Raiku\'s long-term goal is...', options: ['Enable institutional Solana adoption', 'Replace Solana', 'Compete with Solana', 'Leave Solana'], correct: 0 },
-        { id: 176, category: 'Strategy', question: 'Raiku sees its role as...', options: ['Critical infrastructure', 'Optional add-on', 'Unnecessary', 'Temporary'], correct: 0 },
-
-        // Integration - More
-        { id: 177, category: 'Integration', question: 'Raiku\'s expansive implementation unlocks...', options: ['Greater opportunities', 'No benefits', 'More complexity', 'Lower performance'], correct: 0 },
-        { id: 178, category: 'Integration', question: 'Developers can choose between Raiku...', options: ['Lite and full modes', 'One mode only', 'No modes', 'Manual setup'], correct: 0 },
-
-        // Market - More
-        { id: 179, category: 'Market', question: 'The DeFi market needs Raiku for...', options: ['Institutional participation', 'Only retail', 'No reason', 'Lower performance'], correct: 0 },
-        { id: 180, category: 'Market', question: 'Trading platforms benefit from Raiku\'s...', options: ['Execution certainty', 'Random behavior', 'High failure', 'No features'], correct: 0 },
-
-        // Infrastructure - More
-        { id: 181, category: 'Infrastructure', question: 'Raiku enables collaboration between...', options: ['Applications and operators', 'No one', 'Only apps', 'Only users'], correct: 0 },
-        { id: 182, category: 'Infrastructure', question: 'The coordination layer allows...', options: ['Seamless cooperation', 'No interaction', 'Random behavior', 'Conflicts'], correct: 0 },
-
-        // Problem Solving - More
-        { id: 183, category: 'Problem', question: 'The root cause Raiku addresses is...', options: ['Coordination in distributed systems', 'Slow internet', 'High fees', 'Bad UI'], correct: 0 },
-        { id: 184, category: 'Problem', question: 'Missed transactions are solved by...', options: ['Raiku\'s guarantees', 'Random retry', 'Manual intervention', 'Nothing'], correct: 0 },
-
-        // Trading - More
-        { id: 185, category: 'Trading', question: 'Failed trades are reduced by...', options: ['Raiku\'s reliability', 'Random luck', 'Manual review', 'Nothing'], correct: 0 },
-        { id: 186, category: 'Trading', question: 'For traders, Raiku provides...', options: ['Predictable execution', 'Random results', 'High failure', 'No benefits'], correct: 0 },
-
-        // Developer Tools - More
-        { id: 187, category: 'Developers', question: 'Raiku gives developers access to...', options: ['Low-level control', 'No control', 'Limited options', 'Random features'], correct: 0 },
-        { id: 188, category: 'Developers', question: 'Application builders can implement...', options: ['Custom execution logic', 'No logic', 'Random behavior', 'Default only'], correct: 0 },
-
-        // Economics - More
-        { id: 189, category: 'Economics', question: 'Raiku aligns incentives between...', options: ['All ecosystem participants', 'No one', 'Only validators', 'Only users'], correct: 0 },
-        { id: 190, category: 'Economics', question: 'The blockspace market creates...', options: ['Efficient allocation', 'Random distribution', 'No market', 'Waste'], correct: 0 },
-
-        // Execution - More
-        { id: 191, category: 'Execution', question: 'Execution with Raiku is...', options: ['Guaranteed and predictable', 'Random', 'Often fails', 'Unpredictable'], correct: 0 },
-        { id: 192, category: 'Execution', question: 'Transaction inclusion through Raiku is...', options: ['Deterministic', 'Random', 'Unlikely', 'Manual'], correct: 0 },
-
-        // Compliance - More
-        { id: 193, category: 'Compliance', question: 'Regulated institutions need Raiku\'s...', options: ['Auditability features', 'Random execution', 'No special features', 'Basic functions'], correct: 0 },
-        { id: 194, category: 'Compliance', question: 'Compliance logic in Raiku is applied...', options: ['Off-chain efficiently', 'On-chain only', 'Not at all', 'Manually'], correct: 0 },
-
-        // Payments - More
-        { id: 195, category: 'Payments', question: 'Real-time payments require...', options: ['Raiku\'s precision', 'Random timing', 'Slow confirmation', 'No guarantees'], correct: 0 },
-        { id: 196, category: 'Payments', question: 'Payment finality with Raiku is...', options: ['Fast and certain', 'Slow and random', 'Uncertain', 'Non-existent'], correct: 0 },
-
-        // Advanced Topics
-        { id: 197, category: 'Advanced', question: 'Raiku\'s approach to blockchain coordination is...', options: ['Novel and necessary', 'Old technology', 'Unnecessary', 'Deprecated'], correct: 0 },
-        { id: 198, category: 'Advanced', question: 'The future of institutional blockchain depends on...', options: ['Infrastructure like Raiku', 'Random chance', 'Nothing specific', 'Old technology'], correct: 0 },
-        { id: 199, category: 'Advanced', question: 'Raiku represents a...', options: ['New paradigm in coordination', 'Minor update', 'Temporary solution', 'Failed experiment'], correct: 0 },
-        { id: 200, category: 'Advanced', question: 'The success of DeFi at scale requires...', options: ['Raiku-level certainty', 'Random execution', 'No special infrastructure', 'Lower performance'], correct: 0 },
-
-        // Extra questions to reach beyond 200
-        { id: 201, category: 'Community', question: 'Where can you join the Raiku community?', options: ['Discord', 'Facebook', 'LinkedIn', 'TikTok'], correct: 0 },
-        { id: 202, category: 'General', question: 'Raiku focuses on which blockchain ecosystem?', options: ['Solana', 'Ethereum', 'Bitcoin', 'Polkadot'], correct: 0 },
-        { id: 203, category: 'Vision', question: 'Raiku envisions a future where...', options: ['Crypto matches traditional finance reliability', 'Crypto remains unpredictable', 'Crypto is abandoned', 'Crypto is slow'], correct: 0 },
-        { id: 204, category: 'Technology', question: 'Raiku uses which type of execution?', options: ['Deterministic', 'Random', 'Probabilistic', 'Manual'], correct: 0 },
-        { id: 205, category: 'Integration', question: 'Raiku can be added to existing Solana apps...', options: ['With minimal changes', 'Only with full rewrite', 'Not at all', 'Manually'], correct: 0 },
-    ];
-
-    // Load from persistent storage
-    async function init() {
-        await loadPersistentData();
-        loadLocalData();
-        displaySavedName();
-        updateLeaderboard('welcomeLeaderboardList');
-    }
-
-    async function loadPersistentData() {
-        try {
-            if (false) { // Disabled window.storage for web hosting
-                // Load leaderboard
-                const leaderboardResult = await window.storage.get('leaderboard', true);
-                if (leaderboardResult && leaderboardResult.value) {
-                    scores = JSON.parse(leaderboardResult.value);
-                }
-
-                // Load custom questions
-                const questionsResult = await window.storage.get('custom-questions', true);
-                if (questionsResult && questionsResult.value) {
-                    customQuestions = JSON.parse(questionsResult.value);
-                }
-
-                // Load admin users
-                const adminsResult = await window.storage.get('admin-users', true);
-                if (adminsResult && adminsResult.value) {
-                    adminUsers = JSON.parse(adminsResult.value);
-                }
-
-                // Load asked questions history
-                const askedResult = await window.storage.get('asked-questions', false);
-                if (askedResult && askedResult.value) {
-                    askedQuestions = JSON.parse(askedResult.value);
-                }
-
-                // Load registered users list
-                const usersResult = await window.storage.get('registered-users', true);
-                if (usersResult && usersResult.value) {
-                    registeredUsers = JSON.parse(usersResult.value);
-                }
+        function stopTimer() {{
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
             }
-        } catch (e) {
-            console.log('Loading from persistent storage failed, using defaults');
-        }
-    }
+            return quizStartTime ? Math.floor((Date.now() - quizStartTime) / 1000) : 0;
+        }}
 
-    function loadLocalData() {
-        try {
-            // Check for username in cookie (30 day persistence)
-            const savedName = getCookie('raikuPlayerName');
-            if (savedName) {
-                currentPlayer = savedName;
-                document.getElementById('playerName').value = savedName;
-            }
-            
-            const localScores = localStorage.getItem('raikuScores');
-            if (localScores && scores.length === 0) {
-                scores = JSON.parse(localScores);
-            }
+        // Base questions - 200+ quality questions about Raiku
 
-            const localUsers = localStorage.getItem('raikuRegisteredUsers');
-            if (localUsers && registeredUsers.length === 0) {
-                registeredUsers = JSON.parse(localUsers);
-            }
-        } catch (e) {
-            console.log('Local storage load failed');
-        }
-    }
+        const baseQuestions = [
+            // Funding & Investors
+            { id: 1, category: 'Funding', question: 'How much total funding has Raiku raised?', options: ['$13.5 million', '$10 million', '$20 million', '$5 million'], correct: 0 },
+            { id: 2, category: 'Funding', question: 'How much was raised in Raiku\'s Seed round?', options: ['$11.25 million', '$10 million', '$13.5 million', '$5 million'], correct: 0 },
+            { id: 3, category: 'Funding', question: 'How much was raised in Raiku\'s Pre-Seed round?', options: ['$2.25 million', '$5 million', '$1 million', '$3 million'], correct: 0 },
+            { id: 4, category: 'Investors', question: 'Which firm led Raiku\'s Seed round?', options: ['Pantera Capital', 'Figment Capital', 'Jump Crypto', 'Lightspeed Faction'], correct: 0 },
+            { id: 5, category: 'Investors', question: 'Which two firms co-led Raiku\'s Pre-Seed round?', options: ['Figment Capital and Big Brain Holdings', 'Pantera and Jump', 'Lightspeed and Reciprocal', 'Hashkey and Initial'], correct: 0 },
+            { id: 6, category: 'Investors', question: 'Which major crypto firm participated in Raiku\'s Seed round?', options: ['Jump Crypto', 'a16z', 'Sequoia', 'Paradigm'], correct: 0 },
+            { id: 7, category: 'Investors', question: 'Is Lightspeed Faction an investor in Raiku?', options: ['Yes', 'No', 'Only as an advisor', 'Only in Pre-Seed'], correct: 0 },
+            { id: 8, category: 'Investors', question: 'Is Hashkey Capital an investor in Raiku?', options: ['Yes, in Seed round', 'No', 'Only in Pre-Seed', 'Only as advisor'], correct: 0 },
+            { id: 9, category: 'Investors', question: 'Which of these is NOT a Raiku investor?', options: ['Sequoia Capital', 'Pantera Capital', 'Jump Crypto', 'Figment Capital'], correct: 0 },
+            { id: 10, category: 'Investors', question: 'Reciprocal Ventures participated in which Raiku rounds?', options: ['Both Pre-Seed and Seed', 'Only Seed', 'Only Pre-Seed', 'Neither'], correct: 0 },
 
-    function displaySavedName() {
-        const display = document.getElementById('savedNameDisplay');
-        const inputGroup = document.getElementById('nameInputGroup');
-        
-        if (currentPlayer) {
-            display.innerHTML = `
-                <div class="saved-name">
-                    Welcome back, ${currentPlayer}! 🐉
-                    <br>
-                    <button class="btn btn-secondary btn-small" onclick="changeUsername()" style="margin-top: 10px;">
-                        Change Username
-                    </button>
-                </div>
-            `;
-            inputGroup.style.display = 'none';
-        } else {
-            display.innerHTML = '';
-            inputGroup.style.display = 'block';
-        }
-    }
+            // Angel Investors
+            { id: 11, category: 'Angels', question: 'Which Solana co-founder is an angel investor in Raiku?', options: ['Anatoly Yakovenko', 'Vitalik Buterin', 'Do Kwon', 'Sam Bankman-Fried'], correct: 0 },
+            { id: 12, category: 'Angels', question: 'Is Austin Federa an angel investor in Raiku?', options: ['Yes', 'No', 'Only advisor', 'Unknown'], correct: 0 },
+            { id: 13, category: 'Angels', question: 'Which organization\'s members are angel investors in Raiku?', options: ['Anza', 'Ethereum Foundation', 'Bitcoin Core', 'Cardano'], correct: 0 },
+            { id: 14, category: 'Angels', question: 'Are there angel investors from Jupiter in Raiku?', options: ['Yes', 'No', 'Only advisors', 'Unknown'], correct: 0 },
+            { id: 15, category: 'Angels', question: 'Kash Dhanda is associated with Raiku as...', options: ['Angel investor', 'Lead investor', 'CMO', 'CTO'], correct: 0 },
 
-    function changeUsername() {
-        if (confirm('Are you sure you want to change your username? This will log you out.')) {
-            currentPlayer = '';
-            deleteCookie('raikuPlayerName');
+            // Team & Leadership
+            { id: 16, category: 'Team', question: 'Who is the CEO and co-founder of Raiku?', options: ['Robin Nordnes', 'Anatoly Yakovenko', 'Austin Federa', 'Offmylawn'], correct: 0 },
+            { id: 17, category: 'Community', question: 'Who is the CMO of Raiku\'s Discord server?', options: ['Offmylawn', 'Robin Nordnes', 'Anatoly Yakovenko', 'Austin Federa'], correct: 0 },
+
+            // Solana Circuit
+            { id: 18, category: 'Solana Circuit', question: 'How many Solana Circuit spaces has Raiku held so far?', options: ['12', '10', '15', '8'], correct: 0 },
+            { id: 19, category: 'Solana Circuit', question: 'Who was the first guest on Raiku\'s first Solana Circuit?', options: ['Pye Finance', 'Jumper Exchange', 'Jupiter', 'Anza'], correct: 0 },
+            { id: 20, category: 'Solana Circuit', question: 'Who was the last guest on Raiku\'s Solana Circuit?', options: ['Jumper Exchange', 'Pye Finance', 'Anza', 'Sanctum'], correct: 0 },
+
+            // Discord Roles
+            { id: 21, category: 'Community', question: 'What is the role for top supporters on Raiku Discord?', options: ['Raiku Chad', 'Dragon Master', 'Raiku Legend', 'Top Supporter'], correct: 0 },
+            { id: 22, category: 'Community', question: 'What is the other special role for top supporters besides "Raiku Chad"?', options: ['The Inevitable', 'Dragon Lord', 'Elite Member', 'Raiku VIP'], correct: 0 },
+
+            // Technology - JIT
+            { id: 23, category: 'JIT', question: 'What does JIT stand for in Raiku\'s context?', options: ['Just-in-Time', 'Jump In Transaction', 'Joint Integration Tool', 'Join In Thread'], correct: 0 },
+            { id: 24, category: 'JIT', question: 'JIT in Raiku enables...', options: ['Just-in-time slot reservation', 'Joint blockchain integration', 'JavaScript tooling', 'Jump trading'], correct: 0 },
+            { id: 25, category: 'JIT', question: 'JIT slot reservation helps with...', options: ['Guaranteed transaction inclusion', 'Faster downloads', 'Better graphics', 'Lower fees only'], correct: 0 },
+            { id: 26, category: 'JIT', question: 'When does JIT compilation happen in Raiku?', options: ['At transaction execution time', 'Before deployment', 'During download', 'Never'], correct: 0 },
+            { id: 27, category: 'JIT', question: 'JIT is particularly useful for...', options: ['High-frequency trading', 'Simple transfers', 'NFT minting', 'Staking only'], correct: 0 },
+
+            // Technology - AOT
+            { id: 28, category: 'AOT', question: 'What does AOT stand for in Raiku?', options: ['Ahead-of-Time', 'All-Over-Time', 'After-Of-Time', 'Around-On-Time'], correct: 0 },
+            { id: 29, category: 'AOT', question: 'AOT compilation in Raiku happens...', options: ['Before execution time', 'During runtime', 'After errors', 'Never'], correct: 0 },
+            { id: 30, category: 'AOT', question: 'AOT slot reservation enables...', options: ['Pre-scheduled transaction execution', 'Random execution', 'Delayed processing', 'Fee reduction'], correct: 0 },
+            { id: 31, category: 'AOT', question: 'The benefit of AOT in Raiku is...', options: ['Predictable execution timing', 'Cheaper transactions', 'Faster internet', 'Better UI'], correct: 0 },
+            { id: 32, category: 'AOT', question: 'AOT is better for applications that need...', options: ['Deterministic control', 'Random outcomes', 'Slow processing', 'High fees'], correct: 0 },
+
+            // Technology - Siqos
+            { id: 33, category: 'Siqos', question: 'Siqos in Raiku refers to...', options: ['Scheduling and coordination system', 'A token name', 'A wallet type', 'A game'], correct: 0 },
+            { id: 34, category: 'Siqos', question: 'Siqos helps Raiku achieve...', options: ['Better transaction coordination', 'Lower prices', 'Faster downloads', 'More colors'], correct: 0 },
+            { id: 35, category: 'Siqos', question: 'The main purpose of Siqos is...', options: ['Efficient execution scheduling', 'Image processing', 'Audio encoding', 'Video streaming'], correct: 0 },
+
+            // Use Cases
+            { id: 36, category: 'Use Cases', question: 'Raiku is built primarily for...', options: ['Institutional-grade trading', 'Gaming only', 'Social media', 'Video streaming'], correct: 0 },
+            { id: 37, category: 'Use Cases', question: 'Which use case does Raiku specifically target?', options: ['High-frequency trading', 'NFT marketplaces only', 'Metaverse games', 'Music streaming'], correct: 0 },
+            { id: 38, category: 'Use Cases', question: 'Raiku enables applications requiring...', options: ['Guaranteed inclusion', 'Random execution', 'Slow confirmation', 'High latency'], correct: 0 },
+            { id: 39, category: 'Use Cases', question: 'DePIN applications can benefit from Raiku because...', options: ['It provides reliable execution', 'It\'s free', 'It\'s colorful', 'It\'s old'], correct: 0 },
+            { id: 40, category: 'Use Cases', question: 'AI applications benefit from Raiku\'s...', options: ['Low-latency compute', 'High fees', 'Slow processing', 'Complex UI'], correct: 0 },
+            { id: 41, category: 'Use Cases', question: 'Raiku is designed for applications that need...', options: ['Predictability and precision', 'Randomness', 'Delays', 'Uncertainty'], correct: 0 },
+            { id: 42, category: 'Use Cases', question: 'Compliance-sensitive services benefit from Raiku because...', options: ['It offers deterministic execution', 'It\'s anonymous', 'It\'s slow', 'It\'s expensive'], correct: 0 },
+
+            // Blockchain & Infrastructure
+            { id: 43, category: 'Infrastructure', question: 'Raiku is built on which blockchain?', options: ['Solana', 'Ethereum', 'Bitcoin', 'Cardano'], correct: 0 },
+            { id: 44, category: 'Infrastructure', question: 'Raiku operates as a...', options: ['Coordination layer', 'Separate L1', 'Sidechain', 'Wrapped token'], correct: 0 },
+            { id: 45, category: 'Infrastructure', question: 'Raiku enhances Solana by...', options: ['Enabling better coordination', 'Replacing it', 'Slowing it down', 'Removing features'], correct: 0 },
+            { id: 46, category: 'Infrastructure', question: 'Raiku\'s architecture includes...', options: ['Validator-run sidecars', 'Only smart contracts', 'Proof-of-work', 'Manual operations'], correct: 0 },
+            { id: 47, category: 'Infrastructure', question: 'Raiku\'s block building uses...', options: ['Specialized validators', 'Random nodes', 'Central servers', 'User devices'], correct: 0 },
+            { id: 48, category: 'Infrastructure', question: 'Raiku guarantees transaction inclusion through...', options: ['Advanced scheduling engine', 'Random selection', 'Manual review', 'Lottery system'], correct: 0 },
+
+            // Performance
+            { id: 49, category: 'Performance', question: 'Raiku achieves sub-50ms...', options: ['Pre-confirmations', 'Full finality', 'Block times', 'Network delays'], correct: 0 },
+            { id: 50, category: 'Performance', question: 'Raiku\'s reliability is rated at...', options: ['>99.9%', '50%', '80%', '60%'], correct: 0 },
+            { id: 51, category: 'Performance', question: 'Raiku places compute...', options: ['Close to where transactions happen', 'Far from users', 'On central servers', 'In the cloud only'], correct: 0 },
+            { id: 52, category: 'Performance', question: 'Raiku enables execution on...', options: ['Microsecond precision', 'Hour precision', 'Day precision', 'Week precision'], correct: 0 },
+            { id: 53, category: 'Performance', question: 'On Solana, what percentage of HFT transactions typically fail?', options: ['Over 95%', '10%', '5%', '1%'], correct: 0 },
+
+            // Validator Partnerships
+            { id: 54, category: 'Validators', question: 'Which validator is a Raiku partner?', options: ['Figment', 'Random Validator Inc', 'Solo Staker', 'Home Node'], correct: 0 },
+            { id: 55, category: 'Validators', question: 'Is Kiln a validator partner of Raiku?', options: ['Yes', 'No', 'Only advisor', 'Unknown'], correct: 0 },
+            { id: 56, category: 'Validators', question: 'Is Everstake partnered with Raiku?', options: ['Yes', 'No', 'Only as investor', 'Unknown'], correct: 0 },
+            { id: 57, category: 'Validators', question: 'Which of these is a Raiku validator partner?', options: ['Staking Facilities', 'Random Staker', 'Solo Validator', 'Home Staker'], correct: 0 },
+            { id: 58, category: 'Validators', question: 'Is Blockdaemon a Raiku validator partner?', options: ['Yes', 'No', 'Only investor', 'Unknown'], correct: 0 },
+            { id: 59, category: 'Validators', question: 'Chorus One is a...', options: ['Raiku validator partner', 'Competitor', 'Unrelated company', 'Token'], correct: 0 },
+
+            // Future & Vision
+            { id: 60, category: 'Future', question: 'Raiku is building infrastructure for...', options: ['Institutional execution on Solana', 'Gaming only', 'Social media', 'Music streaming'], correct: 0 },
+            { id: 61, category: 'Future', question: 'Raiku aims to enable...', options: ['Certainty for institutional trading', 'Random outcomes', 'Slow execution', 'High unpredictability'], correct: 0 },
+            { id: 62, category: 'Future', question: 'Raiku\'s vision includes making Solana viable for...', options: ['Regulated financial services', 'Gambling only', 'Anonymous transactions', 'Unregulated activity'], correct: 0 },
+            { id: 63, category: 'Future', question: 'Raiku is developing support for...', options: ['Real-time payments', 'Delayed transactions', 'Offline payments', 'Paper money'], correct: 0 },
+            { id: 64, category: 'Future', question: 'The Global Account Model will support...', options: ['Multiple VM environments', 'Only SVM', 'Only EVM', 'No VMs'], correct: 0 },
+            { id: 65, category: 'Future', question: 'Raiku plans to enable developers to...', options: ['Deploy across SVM, EVM, and Move', 'Use only Solidity', 'Use only Rust', 'Use no code'], correct: 0 },
+
+            // Problem Solving
+            { id: 66, category: 'Problem', question: 'What problem does Raiku solve?', options: ['Transaction unpredictability', 'High gas fees only', 'Slow internet', 'Bad design'], correct: 0 },
+            { id: 67, category: 'Problem', question: 'Raiku addresses the coordination problem in...', options: ['Distributed networks', 'Centralized databases', 'Local files', 'Single machines'], correct: 0 },
+            { id: 68, category: 'Problem', question: 'Without Raiku, institutional apps on Solana face...', options: ['Unpredictable execution', 'Perfect execution', 'No issues', 'Low performance'], correct: 0 },
+            { id: 69, category: 'Problem', question: 'Raiku makes crypto apps...', options: ['As reliable as traditional tech', 'Less reliable', 'Slower', 'More complex'], correct: 0 },
+
+            // Integration
+            { id: 70, category: 'Integration', question: 'Developers can integrate Raiku lite mode with...', options: ['As little as two lines of code', 'Thousands of lines', 'Complete rewrite', 'No code'], correct: 0 },
+            { id: 71, category: 'Integration', question: 'Raiku offers integration that is...', options: ['Simple and lightweight', 'Complex and heavy', 'Impossible', 'Deprecated'], correct: 0 },
+
+            // General Knowledge
+            { id: 72, category: 'General', question: 'Raiku launched in which year?', options: ['2024', '2020', '2023', '2025'], correct: 0 },
+            { id: 73, category: 'General', question: 'The Raiku website is...', options: ['www.raiku.com', 'www.raiku.io', 'www.raiku.org', 'www.raiku.net'], correct: 0 },
+            { id: 74, category: 'General', question: 'Raiku\'s documentation can be found at...', options: ['docs.raiku.com', 'github.com/raiku', 'raiku.wiki', 'raiku.gitbook'], correct: 0 },
+            { id: 75, category: 'General', question: 'Raiku has a community on...', options: ['Discord', 'Telegram only', 'WhatsApp', 'SMS'], correct: 0 },
+            { id: 76, category: 'General', question: 'Raiku is active on X (Twitter) at...', options: ['@raikucom', '@raiku', '@raikuchain', '@raikuio'], correct: 0 },
+
+            // Technical Details
+            { id: 77, category: 'Technical', question: 'Raiku introduces a...', options: ['Two-sided execution marketplace', 'One-way system', 'Closed system', 'Manual marketplace'], correct: 0 },
+            { id: 78, category: 'Technical', question: 'Raiku includes a programmable...', options: ['Scheduler (Ackermann-node)', 'Random generator', 'Manual operator', 'Simple timer'], correct: 0 },
+            { id: 79, category: 'Technical', question: 'Raiku uses edge compute that operates...', options: ['Outside consensus but coordinated', 'Inside consensus only', 'Completely separate', 'Manually'], correct: 0 },
+            { id: 80, category: 'Technical', question: 'Raiku\'s architecture enables...', options: ['Deterministic guarantees', 'Random results', 'Unpredictable outcomes', 'Delayed execution'], correct: 0 },
+
+            // Comparisons
+            { id: 81, category: 'Comparison', question: 'Compared to other L1s, Raiku on Solana offers...', options: ['Better coordination and certainty', 'Lower performance', 'Higher unpredictability', 'No advantages'], correct: 0 },
+            { id: 82, category: 'Comparison', question: 'Raiku enables Solana to compete with...', options: ['Arbitrum for institutional use', 'Only gaming chains', 'Social media platforms', 'Search engines'], correct: 0 },
+            { id: 83, category: 'Comparison', question: 'Why might Robinhood have chosen Arbitrum over Solana?', options: ['Lack of guaranteed execution', 'Lower speed', 'Better colors', 'Cheaper'], correct: 0 },
+
+            // Market & Adoption
+            { id: 84, category: 'Market', question: 'Raiku targets which market segment?', options: ['Institutional DeFi', 'Retail gaming only', 'Social media', 'E-commerce'], correct: 0 },
+            { id: 85, category: 'Market', question: 'Raiku enables...', options: ['Institutional-grade certainty', 'Retail speculation only', 'Random trading', 'Gambling'], correct: 0 },
+
+            // More Technical Depth
+            { id: 86, category: 'Technical', question: 'Raiku\'s validator sidecars enable...', options: ['Off-chain computation coordination', 'On-chain storage', 'Random execution', 'Manual processing'], correct: 0 },
+            { id: 87, category: 'Technical', question: 'The Ackermann-node in Raiku is responsible for...', options: ['Programmable scheduling', 'Random selection', 'Manual control', 'Storage only'], correct: 0 },
+            { id: 88, category: 'Technical', question: 'Raiku maintains Solana\'s...', options: ['Speed and composability', 'Slowness', 'Complexity', 'Limitations'], correct: 0 },
+            { id: 89, category: 'Technical', question: 'Raiku adds to Solana...', options: ['Predictability and auditability', 'Random features', 'Slower execution', 'More bugs'], correct: 0 },
+            { id: 90, category: 'Technical', question: 'Raiku operates as an...', options: ['Off-chain edge compute layer', 'On-chain contract only', 'Central server', 'Mobile app'], correct: 0 },
+
+            // Strategic Positioning
+            { id: 91, category: 'Strategy', question: 'Raiku positions itself as...', options: ['Essential infrastructure for Solana', 'A competitor to Solana', 'A gaming platform', 'An NFT marketplace'], correct: 0 },
+            { id: 92, category: 'Strategy', question: 'Raiku\'s approach is to...', options: ['Enhance not replace', 'Replace Solana', 'Compete with Solana', 'Ignore Solana'], correct: 0 },
+            { id: 93, category: 'Strategy', question: 'Raiku enables new...', options: ['Validator revenue opportunities', 'User fees only', 'Developer costs', 'Complexity'], correct: 0 },
+
+            // Developer Focus
+            { id: 94, category: 'Developers', question: 'Raiku gives developers...', options: ['Control over execution timing', 'No control', 'Random timing', 'Delayed execution'], correct: 0 },
+            { id: 95, category: 'Developers', question: 'Developers can use Raiku to...', options: ['Build predictable applications', 'Create random apps', 'Make slow apps', 'Build buggy software'], correct: 0 },
+            { id: 96, category: 'Developers', question: 'Raiku enables developers to implement...', options: ['Custom sequencing policies', 'Random policies', 'No policies', 'Manual policies'], correct: 0 },
+            { id: 97, category: 'Developers', question: 'With Raiku, developers can apply...', options: ['Off-chain compliance logic', 'No logic', 'Random logic', 'Slow logic'], correct: 0 },
+
+            // Industry Impact
+            { id: 98, category: 'Impact', question: 'Raiku addresses a gap in...', options: ['Solana\'s institutional readiness', 'Gaming infrastructure', 'Social media tools', 'E-commerce platforms'], correct: 0 },
+            { id: 99, category: 'Impact', question: 'Raiku makes possible...', options: ['Real-world crypto deployment', 'Only toy applications', 'Slow adoption', 'Limited use'], correct: 0 },
+            { id: 100, category: 'Impact', question: 'For DeFi to go institutional, it needs...', options: ['Raiku-level certainty', 'Random execution', 'Slow confirmation', 'High fees'], correct: 0 },
+
+            // Execution Guarantees
+            { id: 101, category: 'Guarantees', question: 'Raiku guarantees...', options: ['Block inclusion', 'Random failure', 'Slow execution', 'High latency'], correct: 0 },
+            { id: 102, category: 'Guarantees', question: 'With Raiku, transactions...', options: ['Land predictably', 'May fail randomly', 'Always fail', 'Never execute'], correct: 0 },
+            { id: 103, category: 'Guarantees', question: 'Raiku provides deterministic...', options: ['Execution outcomes', 'Random results', 'Unknown outcomes', 'Failed results'], correct: 0 },
+
+            // System Reliability
+            { id: 104, category: 'Reliability', question: 'Raiku system reliability...', options: ['Never fails under pressure', 'Fails often', 'Is unpredictable', 'Is untested'], correct: 0 },
+            { id: 105, category: 'Reliability', question: 'Raiku is designed to handle...', options: ['Extreme stress and scale', 'Low volume only', 'Simple tasks', 'Basic operations'], correct: 0 },
+
+            // Latency & Speed
+            { id: 106, category: 'Performance', question: 'Raiku offers control where...', options: ['Milliseconds matter', 'Hours matter', 'Days matter', 'Time doesn\'t matter'], correct: 0 },
+            { id: 107, category: 'Performance', question: 'Raiku achieves...', options: ['Low latency with control', 'High latency', 'Random latency', 'No latency control'], correct: 0 },
+
+            // Application Logic
+            { id: 108, category: 'Developers', question: 'Raiku gives builders freedom to...', options: ['Shape low-level application logic', 'Use only templates', 'No customization', 'Follow strict rules'], correct: 0 },
+            { id: 109, category: 'Developers', question: 'With Raiku, builders have...', options: ['Unparalleled control', 'No control', 'Limited control', 'Random control'], correct: 0 },
+
+            // Marketplace
+            { id: 110, category: 'Economics', question: 'Raiku creates a marketplace for...', options: ['Blockspace and execution', 'Only tokens', 'NFTs only', 'Physical goods'], correct: 0 },
+            { id: 111, category: 'Economics', question: 'Raiku\'s marketplace aligns incentives for...', options: ['Developers, validators, institutions', 'Only users', 'Only validators', 'Only developers'], correct: 0 },
+
+            // Network Coordination
+            { id: 112, category: 'Infrastructure', question: 'Raiku solves a...', options: ['Fundamental coordination problem', 'Storage problem', 'Network speed issue', 'UI problem'], correct: 0 },
+            { id: 113, category: 'Infrastructure', question: 'Raiku makes distributed networks...', options: ['More coordinated', 'More random', 'Less efficient', 'Slower'], correct: 0 },
+
+            // Real-World Applications
+            { id: 114, category: 'Use Cases', question: 'Raiku enables...', options: ['Tokenized stock platforms', 'Only simple transfers', 'Basic payments', 'No real use cases'], correct: 0 },
+            { id: 115, category: 'Use Cases', question: 'If Raiku existed earlier, platforms like Robinhood could...', options: ['Build natively on Solana', 'Still avoid Solana', 'Use Ethereum', 'Use Bitcoin'], correct: 0 },
+
+            // Protocol Features
+            { id: 116, category: 'Technical', question: 'Raiku decouples...', options: ['Block-building process', 'Nothing', 'User interface', 'Storage'], correct: 0 },
+            { id: 117, category: 'Technical', question: 'Raiku enables validators to...', options: ['Specialize and differentiate', 'All do the same thing', 'Compete randomly', 'Stop validating'], correct: 0 },
+
+            // Ecosystem Benefits
+            { id: 118, category: 'Ecosystem', question: 'Raiku unlocks for Solana...', options: ['Higher performance and reliability', 'Lower performance', 'More complexity', 'Less throughput'], correct: 0 },
+            { id: 119, category: 'Ecosystem', question: 'Raiku enables...', options: ['Scalable throughput', 'Limited capacity', 'Low throughput', 'No scaling'], correct: 0 },
+            { id: 120, category: 'Ecosystem', question: 'Raiku creates...', options: ['Richer application experiences', 'Simpler apps only', 'Limited features', 'No applications'], correct: 0 },
+
+            // Institutional Requirements
+            { id: 121, category: 'Institutional', question: 'Institutions need...', options: ['Certainty not just speed', 'Only speed', 'Only low fees', 'Random execution'], correct: 0 },
+            { id: 122, category: 'Institutional', question: 'For institutions, being able to predict...', options: ['When transactions land is crucial', 'Is not important', 'Doesn\'t matter', 'Is impossible'], correct: 0 },
+            { id: 123, category: 'Institutional', question: 'Institutional strategies require...', options: ['Microsecond precision', 'Hour precision', 'Day precision', 'No precision'], correct: 0 },
+
+            // Competitive Advantages
+            { id: 124, category: 'Advantages', question: 'Raiku\'s key advantage is...', options: ['Guaranteed outcomes', 'Lower cost only', 'Better UI', 'More marketing'], correct: 0 },
+            { id: 125, category: 'Advantages', question: 'Raiku offers something that base Solana doesn\'t...', options: ['Execution guarantees', 'High speed', 'Low fees', 'Smart contracts'], correct: 0 },
+
+            // Development Tools
+            { id: 126, category: 'Developers', question: 'Raiku provides...', options: ['Multiple integration options', 'One way only', 'No tools', 'Manual setup'], correct: 0 },
+            { id: 127, category: 'Developers', question: 'Raiku lite mode requires...', options: ['Minimal code changes', 'Complete rewrite', 'No code', 'Thousands of lines'], correct: 0 },
+
+            // Infrastructure Evolution
+            { id: 128, category: 'Future', question: 'Raiku represents...', options: ['The next evolution of Solana', 'A replacement for Solana', 'A competing chain', 'An unrelated project'], correct: 0 },
+            { id: 129, category: 'Future', question: 'Raiku enables Solana to handle...', options: ['Institutional workloads', 'Only retail trading', 'Only NFTs', 'Only gaming'], correct: 0 },
+
+            // Technical Innovation
+            { id: 130, category: 'Innovation', question: 'Raiku innovates on...', options: ['Block building architecture', 'Nothing new', 'UI design', 'Marketing'], correct: 0 },
+            { id: 131, category: 'Innovation', question: 'Raiku\'s edge compute approach is...', options: ['Novel and necessary', 'Old technology', 'Unnecessary', 'Deprecated'], correct: 0 },
+
+            // Compliance & Regulation
+            { id: 132, category: 'Compliance', question: 'Raiku enables...', options: ['Off-chain compliance logic', 'No compliance', 'Random compliance', 'Manual compliance'], correct: 0 },
+            { id: 133, category: 'Compliance', question: 'For regulated services, Raiku provides...', options: ['Required determinism', 'Random execution', 'No guarantees', 'Uncertain outcomes'], correct: 0 },
+
+            // Execution Control
+            { id: 134, category: 'Control', question: 'Raiku gives applications control over...', options: ['Transaction ordering', 'Nothing', 'Only timing', 'Only fees'], correct: 0 },
+            { id: 135, category: 'Control', question: 'Custom sequencing with Raiku allows...', options: ['Application-specific logic', 'Random ordering', 'No customization', 'Default behavior only'], correct: 0 },
+
+            // Network Effects
+            { id: 136, category: 'Network', question: 'Raiku maintains Solana\'s...', options: ['Liquidity and composability', 'Limitations', 'Complexity', 'Slowness'], correct: 0 },
+            { id: 137, category: 'Network', question: 'Applications on Raiku can leverage...', options: ['All of Solana\'s ecosystem', 'Nothing', 'Only isolated features', 'Separate networks'], correct: 0 },
+
+            // Trading Infrastructure
+            { id: 138, category: 'Trading', question: 'Raiku enables...', options: ['Institutional trading infrastructure', 'Only retail trading', 'Manual trading', 'No trading'], correct: 0 },
+            { id: 139, category: 'Trading', question: 'For HFT, Raiku provides...', options: ['Necessary reliability', 'Random execution', 'High failure rate', 'No benefits'], correct: 0 },
+
+            // Payment Systems
+            { id: 140, category: 'Payments', question: 'Raiku enables...', options: ['Real-time payment systems', 'Delayed payments', 'Offline payments', 'No payments'], correct: 0 },
+            { id: 141, category: 'Payments', question: 'For payment applications, Raiku offers...', options: ['Guaranteed settlement', 'Random settlement', 'Failed transactions', 'No guarantees'], correct: 0 },
+
+            // Developer Experience
+            { id: 142, category: 'Developers', question: 'Raiku makes building on Solana...', options: ['More predictable', 'More random', 'Harder', 'Impossible'], correct: 0 },
+            { id: 143, category: 'Developers', question: 'Developers choose Raiku for...', options: ['Execution certainty', 'Lower performance', 'Limited features', 'No reason'], correct: 0 },
+
+            // Validator Economics
+            { id: 144, category: 'Validators', question: 'Raiku creates for validators...', options: ['New revenue streams', 'No benefits', 'Only costs', 'Reduced income'], correct: 0 },
+            { id: 145, category: 'Validators', question: 'Validators can offer with Raiku...', options: ['Differentiated services', 'Only standard services', 'No services', 'Random services'], correct: 0 },
+
+            // Market Gap
+            { id: 146, category: 'Market', question: 'Raiku fills a gap in...', options: ['Institutional blockchain infrastructure', 'Consumer gaming', 'Social media', 'E-commerce'], correct: 0 },
+            { id: 147, category: 'Market', question: 'The market Raiku targets values...', options: ['Reliability over speed alone', 'Only speed', 'Only price', 'Random features'], correct: 0 },
+
+            // Technical Architecture
+            { id: 148, category: 'Architecture', question: 'Raiku\'s architecture is...', options: ['Off-chain coordination layer', 'Pure smart contracts', 'Central server', 'Manual system'], correct: 0 },
+            { id: 149, category: 'Architecture', question: 'Raiku coordinates...', options: ['Apps, operators, and L1', 'Nothing', 'Only apps', 'Only operators'], correct: 0 },
+
+            // Execution Environment
+            { id: 150, category: 'Technical', question: 'Raiku will support...', options: ['SVM, EVM, and Move', 'Only SVM', 'Only EVM', 'No VMs'], correct: 0 },
+            { id: 151, category: 'Technical', question: 'The Global Account Model enables...', options: ['Cross-VM deployment', 'Single VM only', 'No deployment', 'Manual setup'], correct: 0 },
+
+            // Protocol Integration
+            { id: 152, category: 'Integration', question: 'Raiku integrates with Solana...', options: ['Without modifying the protocol', 'By forking Solana', 'By replacing Solana', 'Not at all'], correct: 0 },
+            { id: 153, category: 'Integration', question: 'Raiku builds...', options: ['On top of Solana', 'A separate chain', 'Nothing', 'A competitor'], correct: 0 },
+
+            // System Guarantees
+            { id: 154, category: 'Guarantees', question: 'Raiku embeds guarantees into...', options: ['Slot scheduling', 'Random processes', 'No processes', 'Manual workflows'], correct: 0 },
+            { id: 155, category: 'Guarantees', question: 'Raiku\'s guarantees are...', options: ['Deterministic', 'Random', 'Probabilistic', 'Non-existent'], correct: 0 },
+
+            // Application Requirements
+            { id: 156, category: 'Applications', question: 'Apps requiring auditability need...', options: ['Raiku-level control', 'No special infrastructure', 'Random execution', 'Slow processing'], correct: 0 },
+            { id: 157, category: 'Applications', question: 'Real-world deployment requires...', options: ['Raiku\'s predictability', 'Random behavior', 'High failure rate', 'No guarantees'], correct: 0 },
+
+            // Solana Enhancement
+            { id: 158, category: 'Enhancement', question: 'Raiku enhances Solana\'s...', options: ['Core capabilities', 'Limitations', 'Weaknesses', 'Problems'], correct: 0 },
+            { id: 159, category: 'Enhancement', question: 'With Raiku, Solana gains...', options: ['Institutional readiness', 'No benefits', 'More complexity', 'Lower performance'], correct: 0 },
+
+            // Competitive Position
+            { id: 160, category: 'Competition', question: 'Raiku makes Solana competitive with...', options: ['Arbitrum for institutions', 'Nothing', 'Bitcoin', 'Social media'], correct: 0 },
+            { id: 161, category: 'Competition', question: 'Platforms like Robinhood need what Raiku offers...', options: ['Sequencing guarantees', 'Random execution', 'No special features', 'Basic transfers'], correct: 0 },
+
+            // Technical Depth - More Questions
+            { id: 162, category: 'Technical', question: 'Raiku\'s coordination happens...', options: ['Off-chain but tightly with validators', 'Completely separate', 'On-chain only', 'Manually'], correct: 0 },
+            { id: 163, category: 'Technical', question: 'Edge computation in Raiku is positioned...', options: ['Just outside consensus', 'Far from validators', 'On user devices', 'In the cloud'], correct: 0 },
+
+            // Funding Details - More
+            { id: 164, category: 'Funding', question: 'Initial Ventures participated in which round?', options: ['Seed', 'Pre-Seed', 'Both', 'Neither'], correct: 0 },
+            { id: 165, category: 'Investors', question: 'Anagram participated in which round?', options: ['Pre-Seed', 'Seed', 'Both', 'Neither'], correct: 0 },
+
+            // Community - More
+            { id: 166, category: 'Community', question: 'Raiku holds community events called...', options: ['Solana Circuit', 'Raiku Talks', 'Dragon Sessions', 'Tech Tuesdays'], correct: 0 },
+            { id: 167, category: 'Community', question: 'Raiku\'s Friday events are called...', options: ['Friday Townhall', 'Friday Sessions', 'Weekend Talks', 'End Week Chat'], correct: 0 },
+
+            // Team - More
+            { id: 168, category: 'Team', question: 'The leadership focuses on enabling...', options: ['Institutional DeFi', 'Only gaming', 'Social media', 'E-commerce'], correct: 0 },
+
+            // Use Cases - More
+            { id: 169, category: 'Use Cases', question: 'Gaming on Raiku benefits from...', options: ['Low latency guarantees', 'Random timing', 'High latency', 'No benefits'], correct: 0 },
+            { id: 170, category: 'Use Cases', question: 'DePIN on Raiku gains...', options: ['Reliable coordination', 'Random operation', 'No advantages', 'High complexity'], correct: 0 },
+
+            // Performance - More
+            { id: 171, category: 'Performance', question: 'Raiku\'s reliability under stress is...', options: ['Exceptional', 'Poor', 'Average', 'Untested'], correct: 0 },
+            { id: 172, category: 'Performance', question: 'System scale with Raiku...', options: ['Increases reliably', 'Decreases', 'Stays fixed', 'Is random'], correct: 0 },
+
+            // Validators - More
+            { id: 173, category: 'Validators', question: 'H2O Nodes is a...', options: ['Raiku validator partner', 'Competitor', 'User', 'Token'], correct: 0 },
+            { id: 174, category: 'Validators', question: 'Validators benefit from Raiku through...', options: ['New revenue opportunities', 'No benefits', 'Only costs', 'Lower income'], correct: 0 },
+
+            // Strategic - More
+            { id: 175, category: 'Strategy', question: 'Raiku\'s long-term goal is...', options: ['Enable institutional Solana adoption', 'Replace Solana', 'Compete with Solana', 'Leave Solana'], correct: 0 },
+            { id: 176, category: 'Strategy', question: 'Raiku sees its role as...', options: ['Critical infrastructure', 'Optional add-on', 'Unnecessary', 'Temporary'], correct: 0 },
+
+            // Integration - More
+            { id: 177, category: 'Integration', question: 'Raiku\'s expansive implementation unlocks...', options: ['Greater opportunities', 'No benefits', 'More complexity', 'Lower performance'], correct: 0 },
+            { id: 178, category: 'Integration', question: 'Developers can choose between Raiku...', options: ['Lite and full modes', 'One mode only', 'No modes', 'Manual setup'], correct: 0 },
+
+            // Market - More
+            { id: 179, category: 'Market', question: 'The DeFi market needs Raiku for...', options: ['Institutional participation', 'Only retail', 'No reason', 'Lower performance'], correct: 0 },
+            { id: 180, category: 'Market', question: 'Trading platforms benefit from Raiku\'s...', options: ['Execution certainty', 'Random behavior', 'High failure', 'No features'], correct: 0 },
+
+            // Infrastructure - More
+            { id: 181, category: 'Infrastructure', question: 'Raiku enables collaboration between...', options: ['Applications and operators', 'No one', 'Only apps', 'Only users'], correct: 0 },
+            { id: 182, category: 'Infrastructure', question: 'The coordination layer allows...', options: ['Seamless cooperation', 'No interaction', 'Random behavior', 'Conflicts'], correct: 0 },
+
+            // Problem Solving - More
+            { id: 183, category: 'Problem', question: 'The root cause Raiku addresses is...', options: ['Coordination in distributed systems', 'Slow internet', 'High fees', 'Bad UI'], correct: 0 },
+            { id: 184, category: 'Problem', question: 'Missed transactions are solved by...', options: ['Raiku\'s guarantees', 'Random retry', 'Manual intervention', 'Nothing'], correct: 0 },
+
+            // Trading - More
+            { id: 185, category: 'Trading', question: 'Failed trades are reduced by...', options: ['Raiku\'s reliability', 'Random luck', 'Manual review', 'Nothing'], correct: 0 },
+            { id: 186, category: 'Trading', question: 'For traders, Raiku provides...', options: ['Predictable execution', 'Random results', 'High failure', 'No benefits'], correct: 0 },
+
+            // Developer Tools - More
+            { id: 187, category: 'Developers', question: 'Raiku gives developers access to...', options: ['Low-level control', 'No control', 'Limited options', 'Random features'], correct: 0 },
+            { id: 188, category: 'Developers', question: 'Application builders can implement...', options: ['Custom execution logic', 'No logic', 'Random behavior', 'Default only'], correct: 0 },
+
+            // Economics - More
+            { id: 189, category: 'Economics', question: 'Raiku aligns incentives between...', options: ['All ecosystem participants', 'No one', 'Only validators', 'Only users'], correct: 0 },
+            { id: 190, category: 'Economics', question: 'The blockspace market creates...', options: ['Efficient allocation', 'Random distribution', 'No market', 'Waste'], correct: 0 },
+
+            // Execution - More
+            { id: 191, category: 'Execution', question: 'Execution with Raiku is...', options: ['Guaranteed and predictable', 'Random', 'Often fails', 'Unpredictable'], correct: 0 },
+            { id: 192, category: 'Execution', question: 'Transaction inclusion through Raiku is...', options: ['Deterministic', 'Random', 'Unlikely', 'Manual'], correct: 0 },
+
+            // Compliance - More
+            { id: 193, category: 'Compliance', question: 'Regulated institutions need Raiku\'s...', options: ['Auditability features', 'Random execution', 'No special features', 'Basic functions'], correct: 0 },
+            { id: 194, category: 'Compliance', question: 'Compliance logic in Raiku is applied...', options: ['Off-chain efficiently', 'On-chain only', 'Not at all', 'Manually'], correct: 0 },
+
+            // Payments - More
+            { id: 195, category: 'Payments', question: 'Real-time payments require...', options: ['Raiku\'s precision', 'Random timing', 'Slow confirmation', 'No guarantees'], correct: 0 },
+            { id: 196, category: 'Payments', question: 'Payment finality with Raiku is...', options: ['Fast and certain', 'Slow and random', 'Uncertain', 'Non-existent'], correct: 0 },
+
+            // Advanced Topics
+            { id: 197, category: 'Advanced', question: 'Raiku\'s approach to blockchain coordination is...', options: ['Novel and necessary', 'Old technology', 'Unnecessary', 'Deprecated'], correct: 0 },
+            { id: 198, category: 'Advanced', question: 'The future of institutional blockchain depends on...', options: ['Infrastructure like Raiku', 'Random chance', 'Nothing specific', 'Old technology'], correct: 0 },
+            { id: 199, category: 'Advanced', question: 'Raiku represents a...', options: ['New paradigm in coordination', 'Minor update', 'Temporary solution', 'Failed experiment'], correct: 0 },
+            { id: 200, category: 'Advanced', question: 'The success of DeFi at scale requires...', options: ['Raiku-level certainty', 'Random execution', 'No special infrastructure', 'Lower performance'], correct: 0 },
+
+            // Extra questions to reach beyond 200
+            { id: 201, category: 'Community', question: 'Where can you join the Raiku community?', options: ['Discord', 'Facebook', 'LinkedIn', 'TikTok'], correct: 0 },
+            { id: 202, category: 'General', question: 'Raiku focuses on which blockchain ecosystem?', options: ['Solana', 'Ethereum', 'Bitcoin', 'Polkadot'], correct: 0 },
+            { id: 203, category: 'Vision', question: 'Raiku envisions a future where...', options: ['Crypto matches traditional finance reliability', 'Crypto remains unpredictable', 'Crypto is abandoned', 'Crypto is slow'], correct: 0 },
+            { id: 204, category: 'Technology', question: 'Raiku uses which type of execution?', options: ['Deterministic', 'Random', 'Probabilistic', 'Manual'], correct: 0 },
+            { id: 205, category: 'Integration', question: 'Raiku can be added to existing Solana apps...', options: ['With minimal changes', 'Only with full rewrite', 'Not at all', 'Manually'], correct: 0 },
+        ];
+
+        // Load from persistent storage
+        async function init() {
+            await loadPersistentData();
+            loadLocalData();
             displaySavedName();
+            updateLeaderboard('welcomeLeaderboardList');
         }
-    }
 
-    async function saveData() {
-        try {
-            // Save to persistent storage
-            if (false) { // Disabled window.storage for web hosting
-                await window.storage.set('leaderboard', JSON.stringify(scores), true);
-                await window.storage.set('custom-questions', JSON.stringify(customQuestions), true);
-                await window.storage.set('admin-users', JSON.stringify(adminUsers), true);
-                await window.storage.set('asked-questions', JSON.stringify(askedQuestions), false);
-                await window.storage.set('registered-users', JSON.stringify(registeredUsers), true);
+        async function loadPersistentData() {
+    try {
+        const { data: scoresData } = await supabase.from('scores').select('*').order('score', { ascending: false }).limit(100);
+        if (scoresData) scores = scoresData.map(s => ({ name: s.username, score: s.score, total: 20, timeElapsed: s.time_taken, timestamp: s.created_at }));
+
+        const { data: questionsData } = await supabase.from('questions').select('*');
+        if (questionsData) customQuestions = questionsData.map(q => ({ id: q.id, category: 'Custom', question: q.question, options: [q.option_a, q.option_b, q.option_c, q.option_d], correct: ['a','b','c','d'].indexOf(q.correct_answer) }));
+
+        const { data: usersData } = await supabase.from('users').select('username');
+        if (usersData) registeredUsers = usersData.map(u => u.username.toLowerCase());
+
+        const { data: adminsData } = await supabase.from('admins').select('username');
+        if (adminsData) adminUsers = adminsData.map(a => a.username);
+    } catch (e) {
+        console.log('Supabase load failed, using local fallback');
+    }
+}
+        
+
+        function loadLocalData() {
+            try {
+                // Check for username in cookie (30 day persistence)
+                const savedName = getCookie('raikuPlayerName');
+                if (savedName) {
+                    currentPlayer = savedName;
+                    document.getElementById('playerName').value = savedName;
+                }
+                
+                const localScores = localStorage.getItem('raikuScores');
+                if (localScores && scores.length === 0) {
+                    scores = JSON.parse(localScores);
+                }
+
+                const localUsers = localStorage.getItem('raikuRegisteredUsers');
+                if (localUsers && registeredUsers.length === 0) {
+                    registeredUsers = JSON.parse(localUsers);
+                }
+            } catch (e) {
+                console.log('Local storage load failed');
             }
+        }
+
+        function displaySavedName() {
+            const display = document.getElementById('savedNameDisplay');
+            const inputGroup = document.getElementById('nameInputGroup');
             
-            // Also save to localStorage
-            localStorage.setItem('raikuScores', JSON.stringify(scores));
-            localStorage.setItem('raikuRegisteredUsers', JSON.stringify(registeredUsers));
-            
-            // Save username to cookie (30 days)
             if (currentPlayer) {
-                setCookie('raikuPlayerName', currentPlayer, 30);
-            }
-        } catch (e) {
-            console.error('Save failed:', e);
-        }
-    }
-
-    // Get all available questions
-    function getAllQuestions() {
-        return [...baseQuestions, ...customQuestions];
-    }
-
-    // Smart question selection - avoid recently asked
-    function selectQuizQuestions() {
-        const allQuestions = getAllQuestions();
-        const selected = [];
-        const available = allQuestions.filter(q => !askedQuestions.includes(q.id));
-        
-        // If we've asked too many, reset history but keep last 20
-        if (available.length < 20) {
-            askedQuestions = askedQuestions.slice(-20);
-        }
-        
-        // Shuffle available questions
-        const shuffled = available.sort(() => Math.random() - 0.5);
-        
-        // Select 20 and randomize their options
-        for (let i = 0; i < Math.min(20, shuffled.length); i++) {
-            const question = {...shuffled[i]}; // Create a copy
-            
-            // Randomize options
-            const correctAnswer = question.options[question.correct];
-            const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
-            
-            // Find new position of correct answer
-            const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
-            
-            // Update question with shuffled options and new correct index
-            question.options = shuffledOptions;
-            question.correct = newCorrectIndex;
-            
-            selected.push(question);
-            askedQuestions.push(shuffled[i].id);
-        }
-        
-        // Keep asked questions list manageable
-        if (askedQuestions.length > 100) {
-            askedQuestions = askedQuestions.slice(-50);
-        }
-        
-        return selected;
-    }
-
-    async function startQuiz() {
-        const nameInput = document.getElementById('playerName');
-        const inputName = nameInput.value.trim();
-
-        if (!currentPlayer && !inputName) {
-            showNotification('Please enter your name to start the quiz!', 'error');
-            return;
-        }
-
-        // If entering a new name
-        if (inputName && inputName !== currentPlayer) {
-            // Check if username is already taken
-            if (registeredUsers.includes(inputName.toLowerCase())) {
-                showNotification('This name already exists, choose a new name dragon! 🐉', 'error');
-                nameInput.focus();
-                nameInput.select();
-                return;
-            }
-
-            // Validate username (alphanumeric and basic punctuation only, 2-20 chars)
-            if (!/^[a-zA-Z0-9_\-\.]{2,20}$/.test(inputName)) {
-                showNotification('Username must be 2-20 characters and contain only letters, numbers, underscores, hyphens, or periods.', 'error');
-                return;
-            }
-
-            // Register the new username
-            currentPlayer = inputName;
-            registeredUsers.push(inputName.toLowerCase());
-            await saveData();
-            showNotification(`Welcome to the Raiku family, ${inputName}! 🐉`, 'success');
-        }
-
-        quizQuestions = selectQuizQuestions();
-        currentQuestionIndex = 0;
-        userAnswers = new Array(20).fill(null);
-
-        document.querySelector('.welcome-screen').classList.remove('active');
-        document.querySelector('.quiz-screen').classList.add('active');
-
-        startTimer();
-        displayQuestion();
-    }
-
-    function displayQuestion() {
-        const question = quizQuestions[currentQuestionIndex];
-        const progress = ((currentQuestionIndex + 1) / 20) * 100;
-
-        document.getElementById('progressFill').style.width = progress + '%';
-        document.getElementById('questionNumber').textContent = `Question ${currentQuestionIndex + 1} of 20`;
-        document.getElementById('questionCategory').textContent = question.category;
-        document.getElementById('questionText').textContent = question.question;
-
-        const optionsContainer = document.getElementById('optionsContainer');
-        optionsContainer.innerHTML = '';
-
-        question.options.forEach((option, index) => {
-            const optionDiv = document.createElement('div');
-            optionDiv.className = 'option';
-            optionDiv.textContent = option;
-            
-            if (userAnswers[currentQuestionIndex] === index) {
-                optionDiv.classList.add('selected');
-            }
-
-            optionDiv.onclick = () => selectOption(index);
-            optionsContainer.appendChild(optionDiv);
-        });
-
-        document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
-        document.getElementById('nextBtn').textContent = currentQuestionIndex === 19 ? 'Finish' : 'Next';
-    }
-
-    function selectOption(optionIndex) {
-        userAnswers[currentQuestionIndex] = optionIndex;
-        
-        const options = document.querySelectorAll('.option');
-        options.forEach((opt, idx) => {
-            opt.classList.toggle('selected', idx === optionIndex);
-        });
-    }
-
-    function nextQuestion() {
-        if (userAnswers[currentQuestionIndex] === null) {
-            userAnswers[currentQuestionIndex] = -1;
-        }
-
-        if (currentQuestionIndex < 19) {
-            currentQuestionIndex++;
-            displayQuestion();
-        } else {
-            finishQuiz();
-        }
-    }
-
-    function previousQuestion() {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            displayQuestion();
-        }
-    }
-
-    async function finishQuiz() {
-        const timeElapsed = stopTimer();
-        let correctAnswers = 0;
-        let skipped = 0;
-
-        quizQuestions.forEach((question, index) => {
-            if (userAnswers[index] === question.correct) {
-                correctAnswers++;
-            } else if (userAnswers[index] === -1) {
-                skipped++;
-            }
-        });
-
-        let comment = '';
-        if (correctAnswers <= 5) {
-            comment = 'hit the docs mf!';
-        } else if (correctAnswers >= 6 && correctAnswers <= 10) {
-            comment = 'learn the tek more';
-        } else if (correctAnswers >= 11 && correctAnswers <= 15) {
-            comment = 'top chad';
-        } else {
-            comment = 'real dragon';
-        }
-
-        scores.push({
-            name: currentPlayer,
-            score: correctAnswers,
-            total: 20,
-            timeElapsed: timeElapsed,
-            timestamp: new Date().toISOString()
-        });
-
-        scores.sort((a, b) => {
-            if (b.score !== a.score) return b.score - a.score;
-            return (a.timeElapsed || 999999) - (b.timeElapsed || 999999);
-        });
-
-        if (scores.length > 100) {
-            scores = scores.slice(0, 100);
-        }
-
-        await saveData();
-
-        // Display results
-        document.getElementById('finalScore').textContent = `${correctAnswers}/20`;
-        document.getElementById('finalComment').textContent = comment;
-
-        // Display stats
-        const minutes = Math.floor(timeElapsed / 60);
-        const seconds = timeElapsed % 60;
-        const accuracy = Math.round((correctAnswers / 20) * 100);
-        
-        document.getElementById('statsBar').innerHTML = `
-            <div class="stat-item">
-                <div class="stat-value">${minutes}:${seconds.toString().padStart(2, '0')}</div>
-                <div class="stat-label">Time Taken</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">${accuracy}%</div>
-                <div class="stat-label">Accuracy</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">${skipped}</div>
-                <div class="stat-label">Skipped</div>
-            </div>
-        `;
-
-        document.querySelector('.quiz-screen').classList.remove('active');
-        document.querySelector('.results-screen').classList.add('active');
-
-        updateLeaderboard('resultsLeaderboardList');
-    }
-
-    function updateLeaderboard(elementId) {
-        const container = document.getElementById(elementId);
-        container.innerHTML = '';
-
-        if (scores.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: #999;">No scores yet. Be the first!</p>';
-            return;
-        }
-
-        scores.slice(0, 10).forEach((score, index) => {
-            const item = document.createElement('div');
-            item.className = 'leaderboard-item';
-            
-            const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-            
-            let timeStr = '';
-            if (score.timeElapsed) {
-                const mins = Math.floor(score.timeElapsed / 60);
-                const secs = score.timeElapsed % 60;
-                timeStr = ` • ${mins}:${secs.toString().padStart(2, '0')}`;
-            }
-            
-            item.innerHTML = `
-                <span class="rank">${medal} #${index + 1}</span>
-                <span class="player-name">${score.name}</span>
-                <span class="score">${score.score}/20${timeStr}</span>
-            `;
-            
-            container.appendChild(item);
-        });
-    }
-
-    function restartQuiz() {
-        document.querySelector('.results-screen').classList.remove('active');
-        document.querySelector('.welcome-screen').classList.add('active');
-        updateLeaderboard('welcomeLeaderboardList');
-    }
-
-    // Admin Functions
-    function showAdminLogin() {
-        const password = prompt('Enter admin password:');
-        if (password === MASTER_PASSWORD || adminUsers.includes(password)) {
-            document.querySelector('.welcome-screen').classList.remove('active');
-            document.querySelector('.admin-screen').classList.add('active');
-            showRegisteredUsers(); // Show users first instead of add question
-        } else {
-            alert('Invalid password!');
-        }
-    }
-
-    function exitAdmin() {
-        document.querySelector('.admin-screen').classList.remove('active');
-        document.querySelector('.welcome-screen').classList.add('active');
-    }
-
-    function showAddQuestion() {
-        const content = document.getElementById('adminContent');
-        content.innerHTML = `
-            <div class="question-form">
-                <h3 style="color: #BEF202; margin-bottom: 15px;">Add New Question</h3>
-                <div class="input-group">
-                    <label>Category:</label>
-                    <input type="text" id="newCategory" placeholder="e.g., Technology, Community">
-                </div>
-                <div class="input-group">
-                    <label>Question:</label>
-                    <textarea id="newQuestion" placeholder="Enter your question here..."></textarea>
-                </div>
-                <div class="input-group">
-                    <label>Option 1 (Correct Answer):</label>
-                    <input type="text" id="option1" placeholder="Correct answer">
-                </div>
-                <div class="input-group">
-                    <label>Option 2:</label>
-                    <input type="text" id="option2" placeholder="Wrong answer">
-                </div>
-                <div class="input-group">
-                    <label>Option 3:</label>
-                    <input type="text" id="option3" placeholder="Wrong answer">
-                </div>
-                <div class="input-group">
-                    <label>Option 4:</label>
-                    <input type="text" id="option4" placeholder="Wrong answer">
-                </div>
-                <button class="btn" onclick="addQuestion()">Add Question</button>
-            </div>
-        `;
-    }
-
-    async function addQuestion() {
-        const category = document.getElementById('newCategory').value.trim();
-        const question = document.getElementById('newQuestion').value.trim();
-        const opt1 = document.getElementById('option1').value.trim();
-        const opt2 = document.getElementById('option2').value.trim();
-        const opt3 = document.getElementById('option3').value.trim();
-        const opt4 = document.getElementById('option4').value.trim();
-
-        if (!category || !question || !opt1 || !opt2 || !opt3 || !opt4) {
-            alert('Please fill in all fields!');
-            return;
-        }
-
-        const newQ = {
-            id: Date.now(),
-            category: category,
-            question: question,
-            options: [opt1, opt2, opt3, opt4],
-            correct: 0
-        };
-
-        customQuestions.push(newQ);
-        await saveData();
-        alert('Question added successfully!');
-        showAddQuestion();
-    }
-
-    function showQuestionList() {
-        const content = document.getElementById('adminContent');
-        let html = '<h3 style="color: #BEF202; margin-bottom: 15px;">Custom Questions</h3><div class="question-list">';
-        
-        if (customQuestions.length === 0) {
-            html += '<p style="color: #888;">No custom questions yet.</p>';
-        } else {
-            customQuestions.forEach((q, index) => {
-                html += `
-                    <div class="question-item">
-                        <strong>${q.category}:</strong> ${q.question}<br>
-                        <small style="color: #888;">✓ ${q.options[0]}</small>
-                        <button class="delete-btn" onclick="deleteQuestion(${index})">Delete</button>
+                display.innerHTML = `
+                    <div class="saved-name">
+                        Welcome back, ${currentPlayer}! 🐉
+                        <br>
+                        <button class="btn btn-secondary btn-small" onclick="changeUsername()" style="margin-top: 10px;">
+                            Change Username
+                        </button>
                     </div>
                 `;
+                inputGroup.style.display = 'none';
+            } else {
+                display.innerHTML = '';
+                inputGroup.style.display = 'block';
+            }
+        }
+
+        function changeUsername() {
+            if (confirm('Are you sure you want to change your username? This will log you out.')) {
+                currentPlayer = '';
+                deleteCookie('raikuPlayerName');
+                displaySavedName();
+            }
+        }
+
+    async function saveData() {
+    try {
+        if (currentPlayer) setCookie('raikuPlayerName', currentPlayer, 30);
+        localStorage.setItem('raikuScores', JSON.stringify(scores)); // local backup
+    } catch (e) {
+        console.error('Save failed:', e);
+    }
+}
+
+        // Get all available questions
+        function getAllQuestions() {
+            return [...baseQuestions, ...customQuestions];
+        }
+
+        // Smart question selection - avoid recently asked
+        function selectQuizQuestions() {
+            const allQuestions = getAllQuestions();
+            const selected = [];
+            const available = allQuestions.filter(q => !askedQuestions.includes(q.id));
+            
+            // If we've asked too many, reset history but keep last 20
+            if (available.length < 20) {
+                askedQuestions = askedQuestions.slice(-20);
+            }
+            
+            // Shuffle available questions
+            const shuffled = available.sort(() => Math.random() - 0.5);
+            
+            // Select 20 and randomize their options
+            for (let i = 0; i < Math.min(20, shuffled.length); i++) {
+                const question = {...shuffled[i]}; // Create a copy
+                
+                // Randomize options
+                const correctAnswer = question.options[question.correct];
+                const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
+                
+                // Find new position of correct answer
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                
+                // Update question with shuffled options and new correct index
+                question.options = shuffledOptions;
+                question.correct = newCorrectIndex;
+                
+                selected.push(question);
+                askedQuestions.push(shuffled[i].id);
+            }
+            
+            // Keep asked questions list manageable
+            if (askedQuestions.length > 100) {
+                askedQuestions = askedQuestions.slice(-50);
+            }
+            
+            return selected;
+        }
+
+        async function startQuiz() {
+            const nameInput = document.getElementById('playerName');
+            const inputName = nameInput.value.trim();
+
+            if (!currentPlayer && !inputName) {
+                showNotification('Please enter your name to start the quiz!', 'error');
+                return;
+            }
+
+            // If entering a new name
+            if (inputName && inputName !== currentPlayer) {
+                // Check if username is already taken
+                if (registeredUsers.includes(inputName.toLowerCase())) {
+                    showNotification('This name already exists, choose a new name dragon! 🐉', 'error');
+                    nameInput.focus();
+                    nameInput.select();
+                    return;
+                }
+
+                // Validate username (alphanumeric and basic punctuation only, 2-20 chars)
+                if (!/^[a-zA-Z0-9_\-\.]{2,20}$/.test(inputName)) {
+                    showNotification('Username must be 2-20 characters and contain only letters, numbers, underscores, hyphens, or periods.', 'error');
+                    return;
+                }
+
+                const { error } = await supabase.from('users').insert({ username: inputName });
+if (error) {
+    showNotification('This name already exists, choose a new name dragon! 🐉', 'error');
+    return;
+}
+registeredUsers.push(inputName.toLowerCase());
+            }
+
+            quizQuestions = selectQuizQuestions();
+            currentQuestionIndex = 0;
+            userAnswers = new Array(20).fill(null);
+
+            document.querySelector('.welcome-screen').classList.remove('active');
+            document.querySelector('.quiz-screen').classList.add('active');
+
+            startTimer();
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const question = quizQuestions[currentQuestionIndex];
+            const progress = ((currentQuestionIndex + 1) / 20) * 100;
+
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestionIndex + 1} of 20`;
+            document.getElementById('questionCategory').textContent = question.category;
+            document.getElementById('questionText').textContent = question.question;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                
+                if (userAnswers[currentQuestionIndex] === index) {
+                    optionDiv.classList.add('selected');
+                }
+
+                optionDiv.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextBtn').textContent = currentQuestionIndex === 19 ? 'Finish' : 'Next';
+        }
+
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestionIndex] = optionIndex;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, idx) => {
+                opt.classList.toggle('selected', idx === optionIndex);
             });
         }
-        
-        html += '</div>';
-        content.innerHTML = html;
-    }
 
-    async function deleteQuestion(index) {
-        if (confirm('Delete this question?')) {
-            customQuestions.splice(index, 1);
-            await saveData();
-            showQuestionList();
+        function nextQuestion() {
+            if (userAnswers[currentQuestionIndex] === null) {
+                userAnswers[currentQuestionIndex] = -1;
+            }
+
+            if (currentQuestionIndex < 19) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                finishQuiz();
+            }
         }
-    }
 
-    function showAdminManagement() {
-        const content = document.getElementById('adminContent');
-        content.innerHTML = `
-            <div class="question-form">
-                <h3 style="color: #BEF202; margin-bottom: 15px;">Manage Admin Access</h3>
-                <div class="input-group">
-                    <label>Create New Admin Password:</label>
-                    <input type="text" id="newAdminPass" placeholder="Enter new admin password">
-                </div>
-                <button class="btn" onclick="addAdmin()">Add Admin</button>
-                
-                <h4 style="color: #BEF202; margin: 20px 0 10px 0;">Current Admin Passwords:</h4>
-                <div class="question-list">
-                    ${adminUsers.length === 0 ? '<p style="color: #888;">No additional admins</p>' : 
-                        adminUsers.map((pass, i) => `
-                            <div class="question-item">
-                                ${pass}
-                                <button class="delete-btn" onclick="removeAdmin(${i})">Remove</button>
-                            </div>
-                        `).join('')}
-                </div>
-            </div>
-        `;
-    }
-
-    async function addAdmin() {
-        const pass = document.getElementById('newAdminPass').value.trim();
-        if (!pass) {
-            alert('Please enter a password!');
-            return;
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
         }
-        if (adminUsers.includes(pass)) {
-            alert('This password already exists!');
-            return;
-        }
-        adminUsers.push(pass);
-        await saveData();
-        alert('Admin added successfully!');
-        showAdminManagement();
-    }
 
-    async function removeAdmin(index) {
-        if (confirm('Remove this admin?')) {
-            adminUsers.splice(index, 1);
-            await saveData();
-            showAdminManagement();
-        }
-    }
+        async function finishQuiz() {
+            const timeElapsed = stopTimer();
+            let correctAnswers = 0;
+            let skipped = 0;
 
-    function showRegisteredUsers() {
-        const content = document.getElementById('adminContent');
-        
-        let usersList = registeredUsers.map((user, i) => {
-            // Find how many times this user has taken the quiz
-            const userScores = scores.filter(s => s.name.toLowerCase() === user);
-            const attempts = userScores.length;
-            const bestScore = attempts > 0 ? Math.max(...userScores.map(s => s.score)) : 0;
+            quizQuestions.forEach((question, index) => {
+                if (userAnswers[index] === question.correct) {
+                    correctAnswers++;
+                } else if (userAnswers[index] === -1) {
+                    skipped++;
+                }
+            });
+
+            let comment = '';
+            if (correctAnswers <= 5) {
+                comment = 'hit the docs mf!';
+            } else if (correctAnswers >= 6 && correctAnswers <= 10) {
+                comment = 'learn the tek more';
+            } else if (correctAnswers >= 11 && correctAnswers <= 15) {
+                comment = 'top chad';
+            } else {
+                comment = 'real dragon';
+            }
+
+            scores.push({
+                name: currentPlayer,
+                score: correctAnswers,
+                total: 20,
+                timeElapsed: timeElapsed,
+                timestamp: new Date().toISOString()
+            });
+
+            scores.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return (a.timeElapsed || 999999) - (b.timeElapsed || 999999);
+            });
+
+            if (scores.length > 100) {
+                scores = scores.slice(0, 100);
+            }
+
+            await saveData();await supabase.from('scores').insert({ username: currentPlayer, score: correctAnswers, time_taken: timeElapsed });
+
+            // Display results
+            document.getElementById('finalScore').textContent = `${correctAnswers}/20`;
+            document.getElementById('finalComment').textContent = comment;
+
+            // Display stats
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            const accuracy = Math.round((correctAnswers / 20) * 100);
             
-            return `
-                <div class="question-item" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <strong style="color: #BEF202;">${registeredUsers.indexOf(user) + 1}. ${user}</strong>
-                        <br>
-                        <small style="color: #888;">
-                            ${attempts} quiz${attempts !== 1 ? 'zes' : ''} taken
-                            ${attempts > 0 ? `• Best: ${bestScore}/20` : ''}
-                        </small>
-                    </div>
-                    <button class="delete-btn" onclick="deleteUser(${i})">Delete User</button>
+            document.getElementById('statsBar').innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${minutes}:${seconds.toString().padStart(2, '0')}</div>
+                    <div class="stat-label">Time Taken</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${accuracy}%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${skipped}</div>
+                    <div class="stat-label">Skipped</div>
                 </div>
             `;
-        }).join('');
-        
-        content.innerHTML = `
-            <div class="question-form">
-                <h3 style="color: #BEF202; margin-bottom: 10px;">👥 Registered Users</h3>
-                <p style="color: #888; margin-bottom: 15px;">
-                    Total: <strong style="color: #BEF202;">${registeredUsers.length}</strong> users
-                    • All usernames are unique and permanent
-                </p>
-                <div class="question-list" style="max-height: 500px;">
-                    ${registeredUsers.length === 0 ? 
-                        '<p style="color: #888; text-align: center; padding: 40px;">No users registered yet</p>' : 
-                        usersList
-                    }
-                </div>
-            </div>
-        `;
-    }
 
-    async function deleteUser(index) {
-        const username = registeredUsers[index];
-        const userScores = scores.filter(s => s.name.toLowerCase() === username);
-        
-        const confirmMsg = userScores.length > 0 
-            ? `Delete user "${username}"?\n\nThis will also delete ${userScores.length} quiz score(s) and free up the username for re-use.\n\nThis action cannot be undone!`
-            : `Delete user "${username}"?\n\nThis will free up the username for re-use.\n\nThis action cannot be undone!`;
-        
-        if (confirm(confirmMsg)) {
-            registeredUsers.splice(index, 1);
-            
-            // Also remove their scores
-            scores = scores.filter(s => s.name.toLowerCase() !== username);
-            
-            await saveData();
-            alert(`User "${username}" deleted successfully!`);
-            showRegisteredUsers();
+            document.querySelector('.quiz-screen').classList.remove('active');
+            document.querySelector('.results-screen').classList.add('active');
+
+            updateLeaderboard('resultsLeaderboardList');
         }
-    }
 
-    window.onload = init;
-</script>
-```
+        function updateLeaderboard(elementId) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
 
+            if (scores.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">No scores yet. Be the first!</p>';
+                return;
+            }
+
+            scores.slice(0, 10).forEach((score, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+                
+                let timeStr = '';
+                if (score.timeElapsed) {
+                    const mins = Math.floor(score.timeElapsed / 60);
+                    const secs = score.timeElapsed % 60;
+                    timeStr = ` • ${mins}:${secs.toString().padStart(2, '0')}`;
+                }
+                
+                item.innerHTML = `
+                    <span class="rank">${medal} #${index + 1}</span>
+                    <span class="player-name">${score.name}</span>
+                    <span class="score">${score.score}/20${timeStr}</span>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+
+        function restartQuiz() {
+            document.querySelector('.results-screen').classList.remove('active');
+            document.querySelector('.welcome-screen').classList.add('active');
+            updateLeaderboard('welcomeLeaderboardList');
+        }
+
+        // Admin Functions
+        function showAdminLogin() {
+            const password = prompt('Enter admin password:');
+            if (password === MASTER_PASSWORD || adminUsers.includes(password)) {
+                document.querySelector('.welcome-screen').classList.remove('active');
+                document.querySelector('.admin-screen').classList.add('active');
+                showRegisteredUsers(); // Show users first instead of add question
+            } else {
+                alert('Invalid password!');
+            }
+        }
+
+        function exitAdmin() {
+            document.querySelector('.admin-screen').classList.remove('active');
+            document.querySelector('.welcome-screen').classList.add('active');
+        }
+
+        function showAddQuestion() {
+            const content = document.getElementById('adminContent');
+            content.innerHTML = `
+                <div class="question-form">
+                    <h3 style="color: #BEF202; margin-bottom: 15px;">Add New Question</h3>
+                    <div class="input-group">
+                        <label>Category:</label>
+                        <input type="text" id="newCategory" placeholder="e.g., Technology, Community">
+                    </div>
+                    <div class="input-group">
+                        <label>Question:</label>
+                        <textarea id="newQuestion" placeholder="Enter your question here..."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Option 1 (Correct Answer):</label>
+                        <input type="text" id="option1" placeholder="Correct answer">
+                    </div>
+                    <div class="input-group">
+                        <label>Option 2:</label>
+                        <input type="text" id="option2" placeholder="Wrong answer">
+                    </div>
+                    <div class="input-group">
+                        <label>Option 3:</label>
+                        <input type="text" id="option3" placeholder="Wrong answer">
+                    </div>
+                    <div class="input-group">
+                        <label>Option 4:</label>
+                        <input type="text" id="option4" placeholder="Wrong answer">
+                    </div>
+                    <button class="btn" onclick="addQuestion()">Add Question</button>
+                </div>
+            `;
+        }
+
+        async function addQuestion() {
+            const category = document.getElementById('newCategory').value.trim();
+            const question = document.getElementById('newQuestion').value.trim();
+            const opt1 = document.getElementById('option1').value.trim();
+            const opt2 = document.getElementById('option2').value.trim();
+            const opt3 = document.getElementById('option3').value.trim();
+            const opt4 = document.getElementById('option4').value.trim();
+
+            if (!category || !question || !opt1 || !opt2 || !opt3 || !opt4) {
+                alert('Please fill in all fields!');
+                return;
+            }
+
+            const newQ = {
+                id: Date.now(),
+                category: category,
+                question: question,
+                options: [opt1, opt2, opt3, opt4],
+                correct: 0
+            };
+
+            customQuestions.push(newQ);
+            await saveData();
+            alert('Question added successfully!');
+            showAddQuestion();
+        }
+
+        function showQuestionList() {
+            const content = document.getElementById('adminContent');
+            let html = '<h3 style="color: #BEF202; margin-bottom: 15px;">Custom Questions</h3><div class="question-list">';
+            
+            if (customQuestions.length === 0) {
+                html += '<p style="color: #888;">No custom questions yet.</p>';
+            } else {
+                customQuestions.forEach((q, index) => {
+                    html += `
+                        <div class="question-item">
+                            <strong>${q.category}:</strong> ${q.question}<br>
+                            <small style="color: #888;">✓ ${q.options[0]}</small>
+                            <button class="delete-btn" onclick="deleteQuestion(${index})">Delete</button>
+                        </div>
+                    `;
+                });
+            }
+            
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        async function deleteQuestion(index) {
+            if (confirm('Delete this question?')) {
+                customQuestions.splice(index, 1);
+                await saveData();
+                showQuestionList();
+            }
+        }
+
+        function showAdminManagement() {
+            const content = document.getElementById('adminContent');
+            content.innerHTML = `
+                <div class="question-form">
+                    <h3 style="color: #BEF202; margin-bottom: 15px;">Manage Admin Access</h3>
+                    <div class="input-group">
+                        <label>Create New Admin Password:</label>
+                        <input type="text" id="newAdminPass" placeholder="Enter new admin password">
+                    </div>
+                    <button class="btn" onclick="addAdmin()">Add Admin</button>
+                    
+                    <h4 style="color: #BEF202; margin: 20px 0 10px 0;">Current Admin Passwords:</h4>
+                    <div class="question-list">
+                        ${adminUsers.length === 0 ? '<p style="color: #888;">No additional admins</p>' : 
+                            adminUsers.map((pass, i) => `
+                                <div class="question-item">
+                                    ${pass}
+                                    <button class="delete-btn" onclick="removeAdmin(${i})">Remove</button>
+                                </div>
+                            `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function addAdmin() {
+            const pass = document.getElementById('newAdminPass').value.trim();
+            if (!pass) {
+                alert('Please enter a password!');
+                return;
+            }
+            if (adminUsers.includes(pass)) {
+                alert('This password already exists!');
+                return;
+            }
+            adminUsers.push(pass);
+            await saveData();
+            alert('Admin added successfully!');
+            showAdminManagement();
+        }
+
+        async function removeAdmin(index) {
+            if (confirm('Remove this admin?')) {
+                adminUsers.splice(index, 1);
+                await saveData();
+                showAdminManagement();
+            }
+        }
+
+        function showRegisteredUsers() {
+            const content = document.getElementById('adminContent');
+            
+            let usersList = registeredUsers.map((user, i) => {
+                // Find how many times this user has taken the quiz
+                const userScores = scores.filter(s => s.name.toLowerCase() === user);
+                const attempts = userScores.length;
+                const bestScore = attempts > 0 ? Math.max(...userScores.map(s => s.score)) : 0;
+                
+                return `
+                    <div class="question-item" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: #BEF202;">${registeredUsers.indexOf(user) + 1}. ${user}</strong>
+                            <br>
+                            <small style="color: #888;">
+                                ${attempts} quiz${attempts !== 1 ? 'zes' : ''} taken
+                                ${attempts > 0 ? `• Best: ${bestScore}/20` : ''}
+                            </small>
+                        </div>
+                        <button class="delete-btn" onclick="deleteUser(${i})">Delete User</button>
+                    </div>
+                `;
+            }).join('');
+            
+            content.innerHTML = `
+                <div class="question-form">
+                    <h3 style="color: #BEF202; margin-bottom: 10px;">👥 Registered Users</h3>
+                    <p style="color: #888; margin-bottom: 15px;">
+                        Total: <strong style="color: #BEF202;">${registeredUsers.length}</strong> users
+                        • All usernames are unique and permanent
+                    </p>
+                    <div class="question-list" style="max-height: 500px;">
+                        ${registeredUsers.length === 0 ? 
+                            '<p style="color: #888; text-align: center; padding: 40px;">No users registered yet</p>' : 
+                            usersList
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        async function deleteUser(index) {
+            const username = registeredUsers[index];
+            const userScores = scores.filter(s => s.name.toLowerCase() === username);
+            
+            const confirmMsg = userScores.length > 0 
+                ? `Delete user "${username}"?\n\nThis will also delete ${userScores.length} quiz score(s) and free up the username for re-use.\n\nThis action cannot be undone!`
+                : `Delete user "${username}"?\n\nThis will free up the username for re-use.\n\nThis action cannot be undone!`;
+            
+            if (confirm(confirmMsg)) {
+                registeredUsers.splice(index, 1);
+                
+                // Also remove their scores
+                scores = scores.filter(s => s.name.toLowerCase() !== username);
+                
+                await saveData();
+                alert(`User "${username}" deleted successfully!`);
+                showRegisteredUsers();
+            }
+        }
+
+        window.onload = init;
+    </script>
 </body>
 </html>
