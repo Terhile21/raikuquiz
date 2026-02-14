@@ -613,22 +613,36 @@
     <div id="dbStatus" style="position:fixed;bottom:60px;left:50%;transform:translateX(-50%);font-size:0.75em;padding:4px 12px;border-radius:20px;z-index:1000;background:rgba(190,242,2,0.1);color:#BEF202;border:1px solid rgba(190,242,2,0.3);">⟳ connecting...</div>
     <a href="#" class="admin-link" onclick="showAdminLogin(); return false;">⚙️</a>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Supabase client (initialized after CDN loads)
-        let supabase = null;
+        // ── Supabase: created before anything else, guaranteed ready ──────────
+        const SUPABASE_URL = 'https://bsoakiekkdsrrcmjwppy.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzb2FraWVra2RzcnJjbWp3cHB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5NzQxMTMsImV4cCI6MjA4NjU1MDExM30.iv1NwmJnhFjRTJgKvP1Vp3CD4I3Hr0o44YlftU76syA';
 
-        function initSupabase() {
-            try {
-                const { createClient } = window.supabase;
-                supabase = createClient(
-                    'https://bsoakiekkdsrrcmjwppy.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzb2FraWVra2RzcnJjbWp3cHB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5NzQxMTMsImV4cCI6MjA4NjU1MDExM30.iv1NwmJnhFjRTJgKvP1Vp3CD4I3Hr0o44YlftU76syA'
-                );
-                console.log('Supabase ready');
-            } catch(e) {
-                console.error('Supabase init failed:', e);
-            }
+        function loadSupabaseThenInit() {
+            var s = document.createElement('script');
+            // Use the explicit UMD bundle which exposes supabase globally
+            s.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js';
+            s.onload = function() {
+                try {
+                    // v2 UMD bundle exposes supabase.createClient directly
+                    // Supabase v2 UMD sets window.supabase = { createClient, ... }
+                    var sb = window.supabase;
+                    console.log('window.supabase object:', sb);
+                    if (!sb || !sb.createClient) throw new Error('createClient not found. window.supabase=' + JSON.stringify(Object.keys(sb||{})));
+                    window._supabase = sb.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    console.log('✅ Supabase client ready:', window._supabase);
+                } catch(e) {
+                    console.error('❌ Supabase init error:', e);
+                    window._supabase = null;
+                }
+                init();
+            };
+            s.onerror = function() {
+                console.error('❌ Supabase CDN failed to load — running offline');
+                window._supabase = null;
+                init();
+            };
+            document.head.appendChild(s);
         }
 
         // Quiz state
@@ -1079,18 +1093,19 @@
 
         // Load from persistent storage
         async function init() {
-            initSupabase();
             document.getElementById('dbStatus').textContent = '⟳ connecting...';
             await loadPersistentData();
             loadLocalData();
             displaySavedName();
             updateLeaderboard('welcomeLeaderboardList');
             const dbEl = document.getElementById('dbStatus');
-            if (supabase && scores.length >= 0) {
+            if (window._supabase) {
                 dbEl.textContent = '🟢 DB connected';
+                dbEl.style.background = 'rgba(190,242,2,0.15)';
                 dbEl.style.color = '#BEF202';
+                dbEl.style.borderColor = 'rgba(190,242,2,0.4)';
             } else {
-                dbEl.textContent = '🔴 DB offline';
+                dbEl.textContent = '🔴 DB offline — scores saved locally';
                 dbEl.style.background = 'rgba(255,68,68,0.1)';
                 dbEl.style.color = '#ff6666';
                 dbEl.style.borderColor = 'rgba(255,68,68,0.3)';
@@ -1098,18 +1113,18 @@
         }
 
         async function loadPersistentData() {
-            if (!supabase) return;
+            if (!window._supabase) return;
             try {
-                const { data: scoresData, error: e1 } = await supabase.from('scores').select('*').order('score', { ascending: false }).limit(100);
+                const { data: scoresData, error: e1 } = await window._supabase.from('scores').select('*').order('score', { ascending: false }).limit(100);
                 if (!e1 && scoresData) scores = scoresData.map(s => ({ name: s.username, score: s.score, total: 20, timeElapsed: s.time_taken, timestamp: s.created_at }));
 
-                const { data: questionsData, error: e2 } = await supabase.from('questions').select('*');
+                const { data: questionsData, error: e2 } = await window._supabase.from('questions').select('*');
                 if (!e2 && questionsData) customQuestions = questionsData.map(q => ({ id: q.id, category: 'Custom', question: q.question, options: [q.option_a, q.option_b, q.option_c, q.option_d], correct: ['a','b','c','d'].indexOf(q.correct_answer) }));
 
-                const { data: usersData, error: e3 } = await supabase.from('users').select('username');
+                const { data: usersData, error: e3 } = await window._supabase.from('users').select('username');
                 if (!e3 && usersData) registeredUsers = usersData.map(u => u.username.toLowerCase());
 
-                const { data: adminsData, error: e4 } = await supabase.from('admins').select('username');
+                const { data: adminsData, error: e4 } = await window._supabase.from('admins').select('username');
                 if (!e4 && adminsData) adminUsers = adminsData.map(a => a.username);
 
                 console.log('DB loaded: scores=' + scores.length + ' users=' + registeredUsers.length);
@@ -1252,8 +1267,8 @@
                     return;
                 }
 
-                if (supabase) {
-                    const { error } = await supabase.from('users').insert({ username: inputName });
+                if (window._supabase) {
+                    const { error } = await window._supabase.from('users').insert({ username: inputName });
                     if (error) {
                         showNotification('This name already exists, choose a new name dragon! 🐉', 'error');
                         return;
@@ -1376,8 +1391,8 @@
             }
 
             await saveData();
-            if (supabase) {
-                const { error: scoreErr } = await supabase.from('scores').insert({ username: currentPlayer, score: correctAnswers, time_taken: timeElapsed });
+            if (window._supabase) {
+                const { error: scoreErr } = await window._supabase.from('scores').insert({ username: currentPlayer, score: correctAnswers, time_taken: timeElapsed });
                 if (scoreErr) console.error('Score insert error:', scoreErr);
                 else console.log('Score saved to DB');
             }
@@ -1668,7 +1683,7 @@
             }
         }
 
-        window.onload = init;
+        window.onload = loadSupabaseThenInit;
     </script>
 </body>
 </html>
